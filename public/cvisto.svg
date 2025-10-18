@@ -1,0 +1,20 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" width="600" height="150">
+	<defs>
+		<image  width="600" height="150" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAACWAQMAAAA41WRyAAAAAXNSR0IB2cksfwAAAANQTFRF////p8QbyAAAAEFJREFUeJztzDEBAAAMAqDZv/RK+AkByPXE5XK5XC6Xy+VyuVwul8vlcrlcLpfL5XK5XC6Xy+VyuVwul8vlck1cD09nAJdwalDtAAAAAElFTkSuQmCC"/>
+		<image width="192" height="192" id="img2" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM1ZDNhOWIiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGVjay1pY29uIGx1Y2lkZS1jaGVjayI+PHBhdGggZD0iTTIwIDYgOSAxN2wtNS01Ii8+PC9zdmc+"/>
+	</defs>
+	<style>
+		tspan { white-space:pre } 
+		.t0 { font-size: 149px;fill: #000000;font-weight: 400;font-family: "Inter-Regular", "Inter" } 
+	</style>
+	<use id="Background" href="#img1" x="0" y="0"/>
+	<text id="C" style="transform: matrix(1,0,0,1,32,129)" >
+		<tspan x="0" y="0" class="t0">C</tspan><tspan  y="0" class="t0">
+</tspan>
+	</text>
+	<text id="isto" style="transform: matrix(1,0,0,1,311,130)" >
+		<tspan x="0" y="0" class="t0">i</tspan><tspan  y="0" class="t0">s</tspan><tspan  y="0" class="t0">t</tspan><tspan  y="0" class="t0">o
+</tspan>
+	</text>
+	<use id="check" href="#img2" transform="matrix(1.051,0,0,1.051,125,-22)"/>
+</svg>
