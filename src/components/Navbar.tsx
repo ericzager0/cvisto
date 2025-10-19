@@ -32,7 +32,10 @@ export default async function Navbar() {
             <NavLink href="/job-scanner">Escanear aviso</NavLink>
             <NavLink href="/cvs">CVs</NavLink>
             <DropdownMenu>
-              <DropdownMenuTrigger className="cursor-pointer">
+              <DropdownMenuTrigger
+                id="navbar-dropdown-menu-trigger"
+                className="cursor-pointer"
+              >
                 <Avatar>
                   <AvatarImage
                     src={session.user?.image || undefined}
