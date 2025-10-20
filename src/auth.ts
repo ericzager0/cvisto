@@ -1,10 +1,7 @@
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
-import {
-  getUserByEmail,
-  createUser,
-  getUserProfilePictureById,
-} from "./lib/queries";
+import { getUserByEmail, getUserProfilePictureById } from "./lib/queries";
+import { createUser } from "./lib/mutations";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,

@@ -28,7 +28,9 @@ export default function FormDialog({
   action: any;
   children: (
     pending: boolean,
-    actionStarted: { saving: boolean; deleting: boolean }
+    actionStarted: { saving: boolean; deleting: boolean },
+    picturePreview?: string,
+    handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   ) => React.ReactNode;
   type: "add" | "edit";
   onDelete?: (id: number) => Promise<{ success: boolean }>;
@@ -42,6 +44,17 @@ export default function FormDialog({
   const [_state, formAction, pending] = useActionState(action, {
     success: false,
   });
+  const [picturePreview, setPicturePreview] = useState<string>();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      if (picturePreview) URL.revokeObjectURL(picturePreview);
+
+      setPicturePreview(URL.createObjectURL(file));
+    }
+  };
 
   useEffect(() => {
     if (pending) {
@@ -64,6 +77,10 @@ export default function FormDialog({
             saving: false,
             deleting: false,
           });
+          if (picturePreview) {
+            URL.revokeObjectURL(picturePreview);
+            setPicturePreview(undefined);
+          }
         }
       }}
     >
@@ -77,7 +94,7 @@ export default function FormDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4">
-          {children(pending, actionStarted)}
+          {children(pending, actionStarted, picturePreview, handleFileChange)}
           <DialogFooter>
             {onDelete && (
               <Button

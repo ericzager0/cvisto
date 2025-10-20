@@ -1,5 +1,20 @@
 import sql from "./db";
 
+export async function createUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  profile_picture: string
+) {
+  const result = await sql`
+    INSERT INTO users (email, first_name, last_name, profile_picture)
+    VALUES (${email}, ${firstName}, ${lastName}, ${profile_picture})
+    RETURNING id;
+  `;
+
+  return result[0]?.id;
+}
+
 export async function updateUserBio(id: string, newBio: string) {
   await sql`
     UPDATE users
@@ -33,6 +48,14 @@ export async function updateUserName(
   UPDATE users
   SET first_name = ${firstName},
       last_name = ${lastName}
+  WHERE id = ${id}
+  `;
+}
+
+export async function updateProfilePicture(id: string, profilePicture: string) {
+  await sql`
+  UPDATE users
+  SET profile_picture = ${profilePicture}
   WHERE id = ${id}
   `;
 }

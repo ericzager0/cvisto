@@ -8,10 +8,12 @@ import {
   addLink as addLinkMutation,
   deleteLink as deleteLinkMutation,
   editLink as editLinkLinkMutation,
+  updateProfilePicture as updateProfilePictureMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { getLinkOwnerById } from "@/lib/queries";
+import cloudinary from "@/lib/cloudinary";
 
 export async function updateUserBio(_initialState: any, formData: FormData) {
   const session = await auth();
@@ -53,7 +55,7 @@ export async function updateUserLocation(
   return { success: true };
 }
 
-export async function updateUserName(_initialState: any, formData: FormData) {
+export async function updateProfile(_initialState: any, formData: FormData) {
   const session = await auth();
 
   await updateUserNameMutation(
@@ -61,6 +63,32 @@ export async function updateUserName(_initialState: any, formData: FormData) {
     formData.get("firstName") as string,
     formData.get("lastName") as string
   );
+
+  const file = formData.get("picture") as File | null;
+
+  if (file && file.size > 0) {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "cvisto",
+          resource_type: "image",
+          public_id: `user-${session?.user?.id}`,
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      uploadStream.end(buffer);
+    });
+
+    const imageUrl = (uploadResult as any).secure_url;
+    await updateProfilePictureMutation(session?.user?.id as string, imageUrl);
+  }
 
   revalidatePath("/profile");
   return { success: true };

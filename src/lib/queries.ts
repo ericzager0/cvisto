@@ -5,21 +5,6 @@ export async function getUserByEmail(email: string) {
   return result[0]?.id;
 }
 
-export async function createUser(
-  email: string,
-  firstName: string,
-  lastName: string,
-  profile_picture: string
-) {
-  const result = await sql`
-    INSERT INTO users (email, first_name, last_name, profile_picture)
-    VALUES (${email}, ${firstName}, ${lastName}, ${profile_picture})
-    RETURNING id;
-  `;
-
-  return result[0]?.id;
-}
-
 export async function getUserProfilePictureById(id: string) {
   const result = await sql`
   SELECT profile_picture
