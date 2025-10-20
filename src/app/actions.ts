@@ -69,7 +69,6 @@ export async function updateProfile(_initialState: any, formData: FormData) {
   if (file && file.size > 0) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
     const uploadResult = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
@@ -85,8 +84,8 @@ export async function updateProfile(_initialState: any, formData: FormData) {
 
       uploadStream.end(buffer);
     });
-
     const imageUrl = (uploadResult as any).secure_url;
+
     await updateProfilePictureMutation(session?.user?.id as string, imageUrl);
   }
 

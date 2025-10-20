@@ -31,7 +31,7 @@ export default function EditProfileDialog({
       {(pending, actionStarted, picturePreview, handleFileChange) => (
         <div className="flex flex-col gap-2 items-center">
           <div className="relative w-24 h-24">
-            <Avatar className="w-full h-full">
+            <Avatar className="w-full h-full border">
               <AvatarImage src={picturePreview || initialValue.picture} />
               <AvatarFallback />
             </Avatar>
