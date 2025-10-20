@@ -6,6 +6,7 @@ Plataforma SaaS que potencia tu empleabilidad: obtené un CV compatible con ATS 
 
 - **Lenguajes / Frameworks**: React, Next.js (App Router) — arquitectura fullstack.
 - **Persistencia**: PostgreSQL, con cliente postgres.js.
+- **Almacenamiento de archivos**: Cloudinary, para gestión y entrega optimizada de imágenes y documentos.
 - **Autenticación**: Auth.js (Google como proveedor).
 - **Interfaz y diseño**: shadcn/ui (componentes basados en Radix UI), Tailwind CSS, Lucide Icons.
 
