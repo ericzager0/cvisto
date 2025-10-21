@@ -17,24 +17,32 @@ export async function getUserProfilePictureById(id: string) {
 
 export async function getUserProfileById(id: string) {
   const result = await sql`
-  SELECT first_name AS "firstName",
-         last_name AS "lastName",
-         email,
-         profile_picture AS "profilePicture",
-         bio,
-         phone_number as "phoneNumber",
-         location,
-         COALESCE(
-          jsonb_agg(
-            jsonb_build_object('id', l.id, 'link', l.link)
-          ) FILTER (WHERE l.id IS NOT NULL),
-          '[]'::jsonb
-         ) AS links
-  FROM users u
-  LEFT JOIN links l ON l.user_id = u.id
-  WHERE u.id = ${id}
-  GROUP BY first_name, last_name, email, profile_picture, bio, phone_number, location
-  `;
+    SELECT
+      u.first_name AS "firstName",
+      u.last_name AS "lastName",
+      u.email,
+      u.profile_picture AS "profilePicture",
+      u.bio,
+      u.phone_number AS "phoneNumber",
+      u.location,
+      (
+        SELECT jsonb_agg(jsonb_build_object('id', l.id, 'link', l.link))
+        FROM links l
+        WHERE l.user_id = u.id
+      ) AS links,
+      (
+        SELECT jsonb_agg(
+          jsonb_build_object(
+            'id', e.id, 'school', e.school, 'degree', e.degree,
+            'description', e.description, 'startDate', e.start_date, 'endDate', e.end_date
+          )
+        )
+        FROM educations e
+        WHERE e.user_id = u.id
+      ) AS educations
+    FROM users u
+    WHERE u.id = ${id};
+    `;
 
   return result[0];
 }

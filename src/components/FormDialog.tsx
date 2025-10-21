@@ -30,7 +30,8 @@ export default function FormDialog({
     pending: boolean,
     actionStarted: { saving: boolean; deleting: boolean },
     picturePreview?: string,
-    handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    handleFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    open?: boolean
   ) => React.ReactNode;
   type: "add" | "edit";
   onDelete?: (id: number) => Promise<{ success: boolean }>;
@@ -94,7 +95,13 @@ export default function FormDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <form action={formAction} className="grid gap-4">
-          {children(pending, actionStarted, picturePreview, handleFileChange)}
+          {children(
+            pending,
+            actionStarted,
+            picturePreview,
+            handleFileChange,
+            open
+          )}
           <DialogFooter>
             {onDelete && (
               <Button

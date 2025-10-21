@@ -9,6 +9,7 @@ import {
   deleteLink as deleteLinkMutation,
   editLink as editLinkLinkMutation,
   updateProfilePicture as updateProfilePictureMutation,
+  addEducation as addEducationMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -132,4 +133,22 @@ export async function deleteLink(linkId: number) {
   }
 
   return { success: false };
+}
+
+export async function addEducation(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  await addEducationMutation(
+    session?.user?.id as string,
+    formData.get("school") as string,
+    formData.get("degree") as string,
+    formData.get("description") as string,
+    formData.get("startYear") as string,
+    formData.get("startMonth") as string,
+    formData.get("endYear") as string,
+    formData.get("endMonth") as string
+  );
+
+  revalidatePath("/profile");
+  return { success: true };
 }

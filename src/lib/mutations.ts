@@ -1,4 +1,5 @@
 import sql from "./db";
+import { cleanString, formatDate } from "./utils";
 
 export async function createUser(
   email: string,
@@ -81,5 +82,25 @@ export async function deleteLink(id: number) {
   await sql`
   DELETE FROM links
   WHERE id = ${id}
+  `;
+}
+
+export async function addEducation(
+  userId: string,
+  school: string,
+  degree: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  INSERT INTO educations
+  (user_id, school, degree, description, start_date, end_date)
+  VALUES
+  (${userId}, ${cleanString(school)}, ${cleanString(degree)}, ${cleanString(
+    description
+  )}, ${formatDate(startMonth, startYear)}, ${formatDate(endMonth, endYear)})
   `;
 }

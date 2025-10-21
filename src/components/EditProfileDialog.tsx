@@ -40,6 +40,7 @@ export default function EditProfileDialog({
               variant="outline"
               className="h-8 w-8 rounded-full cursor-pointer absolute bottom-0 right-0"
               onClick={handleButtonClick}
+              disabled={pending || actionStarted.saving}
             >
               <Camera className="size-[18px]" />
             </Button>

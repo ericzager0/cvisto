@@ -6,9 +6,12 @@ import EditBioDialog from "@/components/EditBioDialog";
 import EditPhoneDialog from "@/components/EditPhoneDialog";
 import EditLocationDialog from "@/components/EditLocationDialog";
 import EditProfileDialog from "@/components/EditProfileDialog";
-import CreateEducationDialog from "@/components/CreateEducationDialog";
+import AddEducationDialog from "@/components/AddEducationDialog";
 import AddLinkDialog from "@/components/AddLinkDialog";
 import EditLinkDialog from "@/components/EditLinkDialog";
+import NoContentParagraph from "@/components/NoContentParagraph";
+import EducationCard from "@/components/EducationCard";
+import EditEducationDialog from "@/components/EditEducationDialog";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -43,9 +46,11 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Biografía</h2>
           <EditBioDialog initialValue={profile.bio} />
         </div>
-        <p className="break-words">
-          {profile.bio ? profile.bio : "Aún no has proporcionado información."}
-        </p>
+        {profile.bio ? (
+          <p className="break-words">{profile.bio}</p>
+        ) : (
+          <NoContentParagraph />
+        )}
       </div>
 
       <Separator />
@@ -61,7 +66,11 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Teléfono</h2>
           <EditPhoneDialog initialValue={profile.phoneNumber} />
         </div>
-        <p>{profile.phoneNumber ? profile.phoneNumber : "Sin teléfono"}</p>
+        {profile.phoneNumber ? (
+          <p className="break-words">{profile.phoneNumber}</p>
+        ) : (
+          <NoContentParagraph />
+        )}
       </div>
 
       <Separator />
@@ -71,7 +80,11 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Ubicación</h2>
           <EditLocationDialog initialValue={profile.location} />
         </div>
-        <p>{profile.location ? profile.location : "Sin ubicación"}</p>
+        {profile.location ? (
+          <p className="break-words">{profile.location}</p>
+        ) : (
+          <NoContentParagraph />
+        )}
       </div>
 
       <Separator />
@@ -79,9 +92,42 @@ export default async function ProfilePage() {
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 justify-between">
           <h2 className="text-lg font-semibold">Educación</h2>
-          <CreateEducationDialog />
+          <AddEducationDialog />
         </div>
-        <p>Todavía no proporcionaste información.</p>
+        {profile.educations.length > 0 ? (
+          profile.educations.map(
+            ({
+              id,
+              degree,
+              school,
+              endDate,
+              startDate,
+              description,
+            }: {
+              id: number;
+              degree: string;
+              school: string;
+              endDate: string;
+              startDate: string;
+              description: string;
+            }) => (
+              <div key={id} className="flex gap-2 justify-between">
+                <EducationCard
+                  degree={degree}
+                  school={school}
+                  startDate={startDate}
+                  endDate={endDate}
+                  description={description}
+                />
+                <div className="self-start">
+                  <EditEducationDialog />
+                </div>
+              </div>
+            )
+          )
+        ) : (
+          <NoContentParagraph />
+        )}
       </div>
 
       <Separator />
