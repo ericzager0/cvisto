@@ -85,6 +85,30 @@ export async function deleteLink(id: number) {
   `;
 }
 
+export async function addSkill(skill: string, userId: string) {
+  await sql`
+  INSERT INTO skills
+  (skill, user_id)
+  VALUES
+  (${skill}, ${userId})
+  `;
+}
+
+export async function editSkill(skillId: number, newSkill: string) {
+  await sql`
+  UPDATE skills
+  SET skill = ${newSkill}
+  WHERE id = ${skillId}
+  `;
+}
+
+export async function deleteSkill(id: number) {
+  await sql`
+  DELETE FROM skills
+  WHERE id = ${id}
+  `;
+}
+
 export async function addEducation(
   userId: string,
   school: string,

@@ -39,7 +39,12 @@ export async function getUserProfileById(id: string) {
         )
         FROM educations e
         WHERE e.user_id = u.id
-      ) AS educations
+      ) AS educations,
+      (
+        SELECT jsonb_agg(jsonb_build_object('id', s.id, 'skill', s.skill))
+        FROM skills s
+        WHERE s.user_id = u.id
+      ) AS skills
     FROM users u
     WHERE u.id = ${id};
     `;
@@ -51,6 +56,16 @@ export async function getLinkOwnerById(id: number) {
   const result = await sql`
   SELECT user_id as "userId"
   FROM links
+  WHERE id = ${id}
+  `;
+
+  return result[0].userId;
+}
+
+export async function getSkillOwnerById(id: number) {
+  const result = await sql`
+  SELECT user_id as "userId"
+  FROM skills
   WHERE id = ${id}
   `;
 

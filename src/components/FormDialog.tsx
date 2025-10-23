@@ -128,7 +128,7 @@ export default function FormDialog({
               <Button
                 variant="outline"
                 disabled={
-                  pending || actionStarted.deleting || actionStarted.deleting
+                  pending || actionStarted.saving || actionStarted.deleting
                 }
                 className="cursor-pointer"
                 type="button"

@@ -12,10 +12,17 @@ import {
   addEducation as addEducationMutation,
   editEducation as editEducationMutation,
   deleteEducation as deleteEducationMutation,
+  addSkill as addSkillMutation,
+  editSkill as editSkillMutation,
+  deleteSkill as deleteSkillMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { getEducationOwnerById, getLinkOwnerById } from "@/lib/queries";
+import {
+  getEducationOwnerById,
+  getLinkOwnerById,
+  getSkillOwnerById,
+} from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 
 export async function updateUserBio(_initialState: any, formData: FormData) {
@@ -194,6 +201,50 @@ export async function deleteEducation(educationId: number) {
 
   if (session?.user?.id === educationOwnerId) {
     await deleteEducationMutation(educationId);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function addSkill(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  await addSkillMutation(
+    formData.get("skill") as string,
+    session?.user?.id as string
+  );
+
+  revalidatePath("/profile");
+
+  return { success: true };
+}
+
+export async function editSkill(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  const skillId = Number(formData.get("skillId"));
+
+  const skillOwnerId = await getSkillOwnerById(skillId);
+
+  if (session?.user?.id === skillOwnerId) {
+    await editSkillMutation(skillId, formData.get("skill") as string);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function deleteSkill(skillId: number) {
+  const session = await auth();
+  const skillOwnerId = await getSkillOwnerById(skillId);
+
+  if (session?.user?.id === skillOwnerId) {
+    await deleteSkillMutation(skillId);
     revalidatePath("/profile");
 
     return { success: true };
