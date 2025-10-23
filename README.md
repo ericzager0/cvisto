@@ -2,6 +2,10 @@
 
 Plataforma SaaS que potencia tu empleabilidad: obtené un CV compatible con ATS en minutos.
 
+## Estado del proyecto
+
+En desarrollo activo.
+
 ## Tecnologías
 
 - **Lenguajes / Frameworks**: React, Next.js (App Router) — arquitectura fullstack.
