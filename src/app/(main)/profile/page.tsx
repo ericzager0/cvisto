@@ -6,12 +6,11 @@ import EditBioDialog from "@/components/EditBioDialog";
 import EditPhoneDialog from "@/components/EditPhoneDialog";
 import EditLocationDialog from "@/components/EditLocationDialog";
 import EditProfileDialog from "@/components/EditProfileDialog";
-import AddEducationDialog from "@/components/AddEducationDialog";
 import AddLinkDialog from "@/components/AddLinkDialog";
 import EditLinkDialog from "@/components/EditLinkDialog";
 import NoContentParagraph from "@/components/NoContentParagraph";
 import EducationCard from "@/components/EducationCard";
-import EditEducationDialog from "@/components/EditEducationDialog";
+import EducationDialog from "@/components/EducationDialog";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -92,9 +91,9 @@ export default async function ProfilePage() {
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 justify-between">
           <h2 className="text-lg font-semibold">Educación</h2>
-          <AddEducationDialog />
+          <EducationDialog />
         </div>
-        {profile.educations.length > 0 ? (
+        {profile.educations ? (
           profile.educations.map(
             ({
               id,
@@ -120,7 +119,16 @@ export default async function ProfilePage() {
                   description={description}
                 />
                 <div className="self-start">
-                  <EditEducationDialog />
+                  <EducationDialog
+                    initialValue={{
+                      id,
+                      degree,
+                      school,
+                      startDate,
+                      endDate,
+                      description,
+                    }}
+                  />
                 </div>
               </div>
             )
@@ -137,7 +145,7 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Enlaces</h2>
           <AddLinkDialog />
         </div>
-        {profile.links.length > 0 ? (
+        {profile.links ? (
           profile.links.map(({ id, link }: { id: number; link: string }) => (
             <div key={id} className="flex gap-2 justify-between">
               <p>{link}</p>
@@ -145,7 +153,7 @@ export default async function ProfilePage() {
             </div>
           ))
         ) : (
-          <p>No hay links disponibles</p>
+          <NoContentParagraph />
         )}
       </div>
     </div>

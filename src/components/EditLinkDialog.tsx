@@ -28,7 +28,7 @@ export default function AddLinkDialog({
             type="text"
             placeholder="Enlace"
             required
-            disabled={pending || actionStarted.saving}
+            disabled={pending || actionStarted.saving || actionStarted.deleting}
           />
           <input type="hidden" name="linkId" value={linkId} />
         </>

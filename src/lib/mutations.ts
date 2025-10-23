@@ -104,3 +104,31 @@ export async function addEducation(
   )}, ${formatDate(startMonth, startYear)}, ${formatDate(endMonth, endYear)})
   `;
 }
+
+export async function editEducation(
+  id: number,
+  school: string,
+  degree: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  UPDATE educations
+  SET school = ${school},
+      degree = ${degree},
+      description = ${description},
+      start_date = ${formatDate(startMonth, startYear)},
+      end_date = ${formatDate(endMonth, endYear)}
+  WHERE id = ${id}
+  `;
+}
+
+export async function deleteEducation(id: number) {
+  await sql`
+  DELETE FROM educations
+  WHERE id = ${id}
+  `;
+}

@@ -113,6 +113,7 @@ export default function FormDialog({
                     ...prev,
                     deleting: true,
                   }));
+
                   await onDelete(id!);
                 }}
                 disabled={

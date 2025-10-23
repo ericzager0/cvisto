@@ -10,10 +10,12 @@ import {
   editLink as editLinkLinkMutation,
   updateProfilePicture as updateProfilePictureMutation,
   addEducation as addEducationMutation,
+  editEducation as editEducationMutation,
+  deleteEducation as deleteEducationMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { getLinkOwnerById } from "@/lib/queries";
+import { getEducationOwnerById, getLinkOwnerById } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 
 export async function updateUserBio(_initialState: any, formData: FormData) {
@@ -38,6 +40,7 @@ export async function updateUserPhone(_initialState: any, formData: FormData) {
   );
 
   revalidatePath("/profile");
+
   return { success: true };
 }
 
@@ -53,6 +56,7 @@ export async function updateUserLocation(
   );
 
   revalidatePath("/profile");
+
   return { success: true };
 }
 
@@ -91,6 +95,7 @@ export async function updateProfile(_initialState: any, formData: FormData) {
   }
 
   revalidatePath("/profile");
+
   return { success: true };
 }
 
@@ -103,6 +108,7 @@ export async function addLink(_initialState: any, formData: FormData) {
   );
 
   revalidatePath("/profile");
+
   return { success: true };
 }
 
@@ -116,6 +122,7 @@ export async function editLink(_initialState: any, formData: FormData) {
   if (session?.user?.id === linkOwnerId) {
     await editLinkLinkMutation(linkId, formData.get("link") as string);
     revalidatePath("/profile");
+
     return { success: true };
   }
 
@@ -129,6 +136,7 @@ export async function deleteLink(linkId: number) {
   if (session?.user?.id === linkOwnerId) {
     await deleteLinkMutation(linkId);
     revalidatePath("/profile");
+
     return { success: true };
   }
 
@@ -150,5 +158,46 @@ export async function addEducation(_initialState: any, formData: FormData) {
   );
 
   revalidatePath("/profile");
+
   return { success: true };
+}
+
+export async function editEducation(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  const educationId = Number(formData.get("educationId"));
+  const educationOwnerId = await getEducationOwnerById(educationId);
+
+  if (session?.user?.id === educationOwnerId) {
+    await editEducationMutation(
+      educationId,
+      formData.get("school") as string,
+      formData.get("degree") as string,
+      formData.get("description") as string,
+      formData.get("startYear") as string,
+      formData.get("startMonth") as string,
+      formData.get("endYear") as string,
+      formData.get("endMonth") as string
+    );
+
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function deleteEducation(educationId: number) {
+  const session = await auth();
+  const educationOwnerId = await getEducationOwnerById(educationId);
+
+  if (session?.user?.id === educationOwnerId) {
+    await deleteEducationMutation(educationId);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
 }

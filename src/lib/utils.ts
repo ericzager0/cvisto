@@ -48,3 +48,9 @@ export function displayDate(date: string | null): string {
 
   return `${months[monthNumber - 1]} ${year}`;
 }
+
+export const getMonth = (date: string): string =>
+  String(Number(date.split("-")[1]));
+
+export const getYear = (date: string): string =>
+  String(Number(date.split("-")[0]));

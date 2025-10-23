@@ -56,3 +56,13 @@ export async function getLinkOwnerById(id: number) {
 
   return result[0].userId;
 }
+
+export async function getEducationOwnerById(id: number) {
+  const result = await sql`
+  SELECT user_id as "userId"
+  FROM educations
+  WHERE id = ${id}
+  `;
+
+  return result[0].userId;
+}
