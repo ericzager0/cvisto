@@ -84,12 +84,11 @@ function Education({
   open: boolean;
 }) {
   const currentYear = new Date().getFullYear();
-
   const [startMonth, setStartMonth] = useState(
-    initialValue ? getMonth(initialValue.startDate) : ""
+    initialValue?.startDate ? getMonth(initialValue.startDate) : ""
   );
   const [endMonth, setEndMonth] = useState(
-    initialValue ? getMonth(initialValue.endDate) : ""
+    initialValue?.endDate ? getMonth(initialValue.endDate) : ""
   );
 
   useEffect(() => {
@@ -160,9 +159,10 @@ function Education({
             max={currentYear}
             className="flex-1"
             pattern="\d*"
-            required
             disabled={pending || actionStarted.saving || actionStarted.deleting}
-            defaultValue={initialValue ? getYear(initialValue.startDate) : ""}
+            defaultValue={
+              initialValue?.startDate ? getYear(initialValue.startDate) : ""
+            }
           />
         </div>
       </div>
@@ -197,9 +197,10 @@ function Education({
             max={currentYear + 10}
             className="flex-1"
             pattern="\d*"
-            required
             disabled={pending || actionStarted.saving || actionStarted.deleting}
-            defaultValue={initialValue ? getYear(initialValue.endDate) : ""}
+            defaultValue={
+              initialValue?.endDate ? getYear(initialValue.endDate) : ""
+            }
           />
         </div>
       </div>
