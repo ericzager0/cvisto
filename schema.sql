@@ -3,12 +3,40 @@
 BEGIN;
 
 
+CREATE TABLE IF NOT EXISTS public.cvs
+(
+    id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    url text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT cvs_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.educations
+(
+    id bigserial NOT NULL,
+    user_id uuid NOT NULL,
+    school text COLLATE pg_catalog."default" NOT NULL,
+    degree text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    start_date date,
+    end_date date,
+    CONSTRAINT educations_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS public.links
 (
     id bigserial NOT NULL,
     link text COLLATE pg_catalog."default" NOT NULL,
     user_id uuid NOT NULL,
     CONSTRAINT links_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.skills
+(
+    id bigserial NOT NULL,
+    skill text COLLATE pg_catalog."default" NOT NULL,
+    user_id uuid NOT NULL,
+    CONSTRAINT skills_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.users
@@ -25,8 +53,32 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
+ALTER TABLE IF EXISTS public.cvs
+    ADD CONSTRAINT cvs_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.educations
+    ADD CONSTRAINT educations_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
 ALTER TABLE IF EXISTS public.links
     ADD CONSTRAINT links_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.skills
+    ADD CONSTRAINT skills_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
