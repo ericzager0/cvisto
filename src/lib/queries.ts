@@ -81,3 +81,13 @@ export async function getEducationOwnerById(id: number) {
 
   return result[0].userId;
 }
+
+export async function getCVs(userId: string) {
+  const result = await sql`
+  SELECT id, user_id, url
+  FROM cvs
+  WHERE user_id = ${userId}
+  `;
+
+  return result;
+}
