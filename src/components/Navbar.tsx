@@ -29,7 +29,7 @@ export default async function Navbar() {
         </Link>
         {session ? (
           <div className="flex gap-[32px] items-center">
-            <NavLink href="/job-scanner">Escanear aviso</NavLink>
+            <NavLink href="/job-scanner">Scanner</NavLink>
             <NavLink href="/cvs">CVs</NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger

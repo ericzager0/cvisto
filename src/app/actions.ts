@@ -15,6 +15,7 @@ import {
   addSkill as addSkillMutation,
   editSkill as editSkillMutation,
   deleteSkill as deleteSkillMutation,
+  addCV as addCVMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -24,6 +25,7 @@ import {
   getSkillOwnerById,
 } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
+import { v4 as uuidv4 } from "uuid";
 
 export async function updateUserBio(_initialState: any, formData: FormData) {
   const session = await auth();
@@ -251,4 +253,52 @@ export async function deleteSkill(skillId: number) {
   }
 
   return { success: false };
+}
+
+export async function addCV(_initialState: any, formData: FormData) {
+  const session = await auth();
+  const file = formData.get("cv") as File | null;
+
+  if (!file || file.size === 0) {
+    return { success: false };
+  }
+
+  const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    return {
+      success: false,
+    };
+  }
+
+  const newId = uuidv4();
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  const fileExtension = file.type === "application/pdf" ? "pdf" : "docx";
+  const uploadResult = await new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "cvisto",
+        resource_type: "raw",
+        public_id: `cv-${newId}`,
+        format: fileExtension,
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+
+    uploadStream.end(buffer);
+  });
+
+  const newUrl = (uploadResult as any).secure_url;
+
+  await addCVMutation(newId, session?.user?.id as string, newUrl);
+  revalidatePath("/profile");
+
+  return { success: true };
 }
