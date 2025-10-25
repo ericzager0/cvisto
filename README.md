@@ -31,3 +31,11 @@ En desarrollo activo.
 ### Editing profile
 
 ![Editing profile](screenshots/editing-profile.png)
+
+### CVs page
+
+![CVs page](screenshots/cvs.png)
+
+### Uploading CV
+
+![Uploading CV](screenshots/uploading-cv.png)
