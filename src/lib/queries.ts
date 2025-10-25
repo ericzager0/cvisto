@@ -44,7 +44,12 @@ export async function getUserProfileById(id: string) {
         SELECT jsonb_agg(jsonb_build_object('id', s.id, 'skill', s.skill))
         FROM skills s
         WHERE s.user_id = u.id
-      ) AS skills
+      ) AS skills,
+      (
+        SELECT jsonb_agg(jsonb_build_object('id', l.id, 'name', l.name, 'proficiency', l.proficiency))
+        FROM languages l
+        WHERE l.user_id = u.id
+      ) AS languages
     FROM users u
     WHERE u.id = ${id};
     `;
@@ -90,4 +95,14 @@ export async function getCVs(userId: string) {
   `;
 
   return result;
+}
+
+export async function getLanguageOwnerById(id: number) {
+  const result = await sql`
+  SELECT user_id as "userId"
+  FROM languages
+  WHERE id = ${id}
+  `;
+
+  return result[0].userId;
 }

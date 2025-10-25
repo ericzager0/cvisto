@@ -165,3 +165,38 @@ export async function addCV(id: string, userId: string, url: string) {
   (${id}, ${userId}, ${url})
   `;
 }
+
+export async function addLanguage(
+  userId: string,
+  languageName: string,
+  languageProficiency?: string
+) {
+  await sql`
+  INSERT INTO languages
+  (user_id, name, proficiency)
+  VALUES
+  (${userId}, ${languageName}, ${
+    languageProficiency ? languageProficiency : null
+  })
+  `;
+}
+
+export async function editLanguage(
+  id: number,
+  languageName: string,
+  languageProficiency: string
+) {
+  await sql`
+  UPDATE languages
+  SET name = ${languageName},
+      proficiency = ${languageProficiency ? languageProficiency : null}
+  WHERE id = ${id}
+  `;
+}
+
+export async function deleteLanguage(id: number) {
+  await sql`
+  DELETE FROM languages
+  WHERE id = ${id}
+  `;
+}

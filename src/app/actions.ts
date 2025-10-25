@@ -16,6 +16,9 @@ import {
   editSkill as editSkillMutation,
   deleteSkill as deleteSkillMutation,
   addCV as addCVMutation,
+  addLanguage as addLanguageMutation,
+  editLanguage as editLanguageMutation,
+  deleteLanguage as deleteLanguageMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -23,6 +26,7 @@ import {
   getEducationOwnerById,
   getLinkOwnerById,
   getSkillOwnerById,
+  getLanguageOwnerById,
 } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 import { v4 as uuidv4 } from "uuid";
@@ -301,4 +305,52 @@ export async function addCV(_initialState: any, formData: FormData) {
   revalidatePath("/profile");
 
   return { success: true };
+}
+
+export async function addLanguage(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  await addLanguageMutation(
+    session?.user?.id as string,
+    formData.get("name") as string,
+    formData.get("proficiency") as string
+  );
+
+  revalidatePath("/profile");
+
+  return { success: true };
+}
+
+export async function editLanguage(_initialState: any, formData: FormData) {
+  const session = await auth();
+  const languageId = Number(formData.get("languageId"));
+  const languageOwnerId = await getLanguageOwnerById(languageId);
+
+  if (session?.user?.id === languageOwnerId) {
+    await editLanguageMutation(
+      languageId,
+      formData.get("name") as string,
+      formData.get("proficiency") as string
+    );
+
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function deleteLanguage(languageId: number) {
+  const session = await auth();
+  const languageOwnerId = await getLanguageOwnerById(languageId);
+
+  if (session?.user?.id === languageOwnerId) {
+    await deleteLanguageMutation(languageId);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
 }

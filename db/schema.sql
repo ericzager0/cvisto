@@ -2,6 +2,13 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
+CREATE TYPE proficiency AS ENUM (
+  'elementary',
+  'limited',
+  'professional',
+  'full_professional',
+  'native'
+);
 
 CREATE TABLE IF NOT EXISTS public.cvs
 (
@@ -21,6 +28,15 @@ CREATE TABLE IF NOT EXISTS public.educations
     start_date date,
     end_date date,
     CONSTRAINT educations_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.languages
+(
+    id bigserial NOT NULL,
+    user_id uuid NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    proficiency proficiency,
+    CONSTRAINT languages_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.links
@@ -63,6 +79,14 @@ ALTER TABLE IF EXISTS public.cvs
 
 ALTER TABLE IF EXISTS public.educations
     ADD CONSTRAINT educations_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.languages
+    ADD CONSTRAINT languages_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
