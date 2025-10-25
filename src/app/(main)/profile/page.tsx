@@ -27,17 +27,19 @@ export default async function ProfilePage() {
           <AvatarFallback />
         </Avatar>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <h1 className="text-4xl">
             {profile.firstName} {profile.lastName}
           </h1>
-          <EditProfileDialog
-            initialValue={{
-              firstName: profile.firstName,
-              lastName: profile.lastName,
-              picture: profile.profilePicture,
-            }}
-          />
+          <div>
+            <EditProfileDialog
+              initialValue={{
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                picture: profile.profilePicture,
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -121,18 +123,16 @@ export default async function ProfilePage() {
                   endDate={endDate}
                   description={description}
                 />
-                <div className="self-start">
-                  <EducationDialog
-                    initialValue={{
-                      id,
-                      degree,
-                      school,
-                      startDate,
-                      endDate,
-                      description,
-                    }}
-                  />
-                </div>
+                <EducationDialog
+                  initialValue={{
+                    id,
+                    degree,
+                    school,
+                    startDate,
+                    endDate,
+                    description,
+                  }}
+                />
               </div>
             )
           )
@@ -180,9 +180,7 @@ export default async function ProfilePage() {
             }) => (
               <div key={id} className="flex gap-2 justify-between">
                 <LanguageCard name={name} proficiency={proficiency} />
-                <div className="self-start">
-                  <LanguageDialog initialValue={{ id, name, proficiency }} />
-                </div>
+                <LanguageDialog initialValue={{ id, name, proficiency }} />
               </div>
             )
           )

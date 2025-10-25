@@ -18,7 +18,7 @@ function DialogTrigger({
   return (
     <DialogPrimitive.Trigger
       data-slot="dialog-trigger"
-      className="cursor-pointer self-center p-1 hover:bg-gray-100 rounded-full"
+      className="cursor-pointer self-start p-1 hover:bg-gray-100 rounded-full"
       {...props}
     />
   );

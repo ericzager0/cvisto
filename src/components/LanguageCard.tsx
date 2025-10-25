@@ -13,12 +13,14 @@ export default function LanguageCard({
   name: string;
   proficiency?: string;
 }) {
-  return (
-    <div>
-      <p className="font-medium">{name}</p>
-      {proficiency && (
+  if (proficiency) {
+    return (
+      <div>
+        <p className="font-medium">{name}</p>
         <p className="text-[#777777]">{proficiencyMap[proficiency]}</p>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  return <p className="font-medium">{name}</p>;
 }
