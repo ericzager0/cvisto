@@ -107,7 +107,9 @@ ${
 ${
   profile.projects?.length > 0
     ? `Proyectos:
-${profile.projects.map((proj: any) => `- ${proj.title}: ${proj.description}`).join("\n")}`
+${profile.projects
+  .map((proj: any) => `- ${proj.title}: ${proj.description}`)
+  .join("\n")}`
     : ""
 }
 `;
@@ -125,6 +127,8 @@ Analizá esta oferta y el perfil del candidato, y devolvé el análisis en forma
     console.log("Calling Gemini API...");
     const result = await model.generateContent(fullPrompt);
     const response = result.response;
+
+    console.log(response);
 
     // Validar respuesta
     if (!response.candidates || response.candidates.length === 0) {

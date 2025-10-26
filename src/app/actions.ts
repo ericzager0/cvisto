@@ -291,23 +291,6 @@ export async function addSkill(_initialState: any, formData: FormData) {
   return { success: true };
 }
 
-export async function editSkill(_initialState: any, formData: FormData) {
-  const session = await auth();
-
-  const skillId = Number(formData.get("skillId"));
-
-  const skillOwnerId = await getSkillOwnerById(skillId);
-
-  if (session?.user?.id === skillOwnerId) {
-    await editSkillMutation(skillId, formData.get("skill") as string);
-    revalidatePath("/profile");
-
-    return { success: true };
-  }
-
-  return { success: false };
-}
-
 export async function deleteSkill(skillId: number) {
   const session = await auth();
   const skillOwnerId = await getSkillOwnerById(skillId);
