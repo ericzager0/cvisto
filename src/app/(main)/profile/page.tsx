@@ -11,7 +11,7 @@ import EditLinkDialog from "@/components/EditLinkDialog";
 import NoContentParagraph from "@/components/NoContentParagraph";
 import EducationCard from "@/components/EducationCard";
 import EducationDialog from "@/components/EducationDialog";
-import SkillDialog from "@/components/SkillDialog";
+import SkillsPills from "@/components/SkillsPills";
 import LanguageDialog from "@/components/LanguageDialog";
 import LanguageCard from "@/components/LanguageCard";
 
@@ -192,20 +192,8 @@ export default async function ProfilePage() {
       <Separator />
 
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2 justify-between">
-          <h2 className="text-lg font-semibold">Habilidades</h2>
-          <SkillDialog />
-        </div>
-        {profile.skills ? (
-          profile.skills.map(({ id, skill }: { id: number; skill: string }) => (
-            <div key={id} className="flex gap-2 justify-between">
-              <p>{skill}</p>
-              <SkillDialog initialValue={{ id, skill }} />
-            </div>
-          ))
-        ) : (
-          <NoContentParagraph />
-        )}
+        <h2 className="text-lg font-semibold">Habilidades</h2>
+        <SkillsPills skills={profile.skills} />
       </div>
     </div>
   );
