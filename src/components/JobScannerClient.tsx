@@ -1,0 +1,333 @@
+"use client";
+
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Sparkles,
+  FileText,
+  TrendingUp,
+  TrendingDown,
+  Lightbulb,
+} from "lucide-react";
+
+interface Profile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  location?: string;
+  bio?: string;
+  profilePicture?: string;
+  skills?: Array<{ skill: string }>;
+  educations?: Array<{
+    school: string;
+    degree: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
+  }>;
+  links?: Array<{ link: string }>;
+}
+
+interface AnalysisResult {
+  keywords: string[];
+  must_haves: string[];
+  nice_to_haves: string[];
+  gaps: string[];
+  matchScore: number;
+  summaryForRecruiter: string;
+  suggestions: Array<{ text: string; category: string }>;
+}
+
+interface JobScannerClientProps {
+  profile: Profile;
+}
+
+export default function JobScannerClient({ profile }: JobScannerClientProps) {
+  const [jobText, setJobText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleAnalyze = async () => {
+    if (!jobText.trim()) {
+      setError("Por favor pegá el texto del aviso");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setAnalysis(null);
+
+    try {
+      // Transformar el perfil al formato esperado por la API
+      const profileData = {
+        name: `${profile.firstName} ${profile.lastName}`,
+        email: profile.email,
+        phone: profile.phoneNumber || "",
+        location: profile.location || "",
+        about: profile.bio || "",
+        skills: profile.skills?.map((s) => s.skill) || [],
+        experience: [], // TODO: agregar cuando tengas experiencia en el perfil
+        education:
+          profile.educations?.map((edu) => ({
+            institution: edu.school,
+            degree: edu.degree,
+            field: edu.description || "",
+            startDate: edu.startDate || "",
+            endDate: edu.endDate || "",
+            current: !edu.endDate,
+          })) || [],
+        projects: [], // TODO: agregar cuando tengas proyectos en el perfil
+      };
+
+      const response = await fetch("/api/analyze-job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile: profileData, jobText }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.details || data.error || "Error al analizar");
+      }
+
+      setAnalysis(data);
+    } catch (err) {
+      console.error("Error:", err);
+      setError(
+        err instanceof Error ? err.message : "Error al analizar el aviso"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getMatchColor = (score: number) => {
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getMatchBgColor = (score: number) => {
+    if (score >= 80) return "bg-green-100";
+    if (score >= 60) return "bg-yellow-100";
+    return "bg-red-100";
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Input Section */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium">
+            Texto del Aviso de Trabajo
+          </label>
+          <Textarea
+            value={jobText}
+            onChange={(e) => setJobText(e.target.value)}
+            placeholder="Pegá aquí el texto completo del aviso de trabajo...
+
+Ejemplo:
+Título: Desarrollador Full Stack
+Ubicación: Buenos Aires, Argentina
+
+Descripción:
+Buscamos un desarrollador con experiencia en React y Node.js...
+
+Requisitos:
+- 3+ años de experiencia
+- TypeScript
+- etc."
+            rows={15}
+            className="resize-y min-h-[300px]"
+          />
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            onClick={handleAnalyze}
+            disabled={loading || !jobText.trim()}
+            className="flex gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            {loading ? "Analizando..." : "Analizar Aviso"}
+          </Button>
+        </div>
+
+        {error && (
+          <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Results Section */}
+      {analysis && (
+        <>
+          <Separator />
+
+          <div className="flex flex-col gap-6">
+            {/* Match Score */}
+            <div className="flex items-center justify-center">
+              <div
+                className={`flex flex-col items-center gap-2 p-8 rounded-xl ${getMatchBgColor(
+                  analysis.matchScore
+                )}`}
+              >
+                <span className="text-sm font-medium text-gray-600">
+                  Tu Match Score
+                </span>
+                <span
+                  className={`text-6xl font-bold ${getMatchColor(
+                    analysis.matchScore
+                  )}`}
+                >
+                  {analysis.matchScore}%
+                </span>
+                {analysis.matchScore >= 80 && (
+                  <span className="text-sm text-green-700 font-medium">
+                    ¡Excelente coincidencia!
+                  </span>
+                )}
+                {analysis.matchScore >= 60 &&
+                  analysis.matchScore < 80 && (
+                    <span className="text-sm text-yellow-700 font-medium">
+                      Buena coincidencia
+                    </span>
+                  )}
+                {analysis.matchScore < 60 && (
+                  <span className="text-sm text-red-700 font-medium">
+                    Necesitás mejorar algunas áreas
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-600" />
+                <h3 className="font-semibold text-blue-900">
+                  Resumen para el Recruiter
+                </h3>
+              </div>
+              <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
+            </div>
+
+            {/* Keywords */}
+            <div className="flex flex-col gap-3">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Palabras Clave del Aviso
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {analysis.keywords.map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Requirements Grid */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Must Haves */}
+              <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  <h3 className="font-semibold text-green-900">
+                    Requisitos Imprescindibles
+                  </h3>
+                </div>
+                <ul className="space-y-2">
+                  {analysis.must_haves.map((req, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <span className="text-green-600 mt-0.5">•</span>
+                      <span className="text-gray-700">{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Nice to Haves */}
+              <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                  <h3 className="font-semibold text-blue-900">
+                    Requisitos Deseables
+                  </h3>
+                </div>
+                <ul className="space-y-2">
+                  {analysis.nice_to_haves.map((req, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <span className="text-blue-600 mt-0.5">•</span>
+                      <span className="text-gray-700">{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Gaps */}
+            {analysis.gaps.length > 0 && (
+              <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <TrendingDown className="h-5 w-5 text-red-600" />
+                  <h3 className="font-semibold text-red-900">
+                    Brechas Identificadas
+                  </h3>
+                </div>
+                <ul className="space-y-2">
+                  {analysis.gaps.map((gap, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <span className="text-red-600 mt-0.5">•</span>
+                      <span className="text-gray-700">{gap}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Suggestions */}
+            <div className="flex flex-col gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-yellow-600" />
+                <h3 className="font-semibold text-yellow-900">
+                  Sugerencias de Mejora
+                </h3>
+              </div>
+              <ul className="space-y-3">
+                {analysis.suggestions.map((sug, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-medium uppercase flex-shrink-0 mt-0.5">
+                      {sug.category}
+                    </span>
+                    <span className="text-sm text-gray-700">{sug.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Generate CV Button */}
+            <div className="flex justify-center p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+              <Button size="lg" className="flex gap-2">
+                <FileText className="h-5 w-5" />
+                Generar CV Personalizado
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
