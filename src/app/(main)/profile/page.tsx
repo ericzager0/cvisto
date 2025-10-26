@@ -14,6 +14,8 @@ import EducationDialog from "@/components/EducationDialog";
 import SkillDialog from "@/components/SkillDialog";
 import LanguageDialog from "@/components/LanguageDialog";
 import LanguageCard from "@/components/LanguageCard";
+import ExperienceDialog from "@/components/ExperienceDialog";
+import ExperienceCard from "@/components/ExperienceCard";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -86,6 +88,56 @@ export default async function ProfilePage() {
         </div>
         {profile.location ? (
           <p className="break-words">{profile.location}</p>
+        ) : (
+          <NoContentParagraph />
+        )}
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 justify-between">
+          <h2 className="text-lg font-semibold">Experiencia</h2>
+          <ExperienceDialog />
+        </div>
+        {profile.experiences ? (
+          profile.experiences.map(
+            ({
+              id,
+              title,
+              company,
+              endDate,
+              startDate,
+              description,
+            }: {
+              id: number;
+              title: string;
+              company: string;
+              endDate: string;
+              startDate: string;
+              description: string;
+            }) => (
+              <div key={id} className="flex gap-2 justify-between">
+                <ExperienceCard
+                  title={title}
+                  company={company}
+                  startDate={startDate}
+                  endDate={endDate}
+                  description={description}
+                />
+                <ExperienceDialog
+                  initialValue={{
+                    id,
+                    title,
+                    company,
+                    startDate,
+                    endDate,
+                    description,
+                  }}
+                />
+              </div>
+            )
+          )
         ) : (
           <NoContentParagraph />
         )}

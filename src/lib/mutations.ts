@@ -200,3 +200,51 @@ export async function deleteLanguage(id: number) {
   WHERE id = ${id}
   `;
 }
+
+export async function addExperience(
+  userId: string,
+  title: string,
+  company: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  INSERT INTO experiences
+  (user_id, title, company, description, start_date, end_date)
+  VALUES
+  (${userId}, ${cleanString(title)}, ${cleanString(company)}, ${cleanString(
+    description
+  )}, ${formatDate(startMonth, startYear)}, ${formatDate(endMonth, endYear)})
+  `;
+}
+
+export async function editExperience(
+  id: number,
+  title: string,
+  company: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  UPDATE experiences
+  SET title = ${title},
+      company = ${company},
+      description = ${description},
+      start_date = ${formatDate(startMonth, startYear)},
+      end_date = ${formatDate(endMonth, endYear)}
+  WHERE id = ${id}
+  `;
+}
+
+export async function deleteExperience(id: number) {
+  await sql`
+  DELETE FROM experiences
+  WHERE id = ${id}
+  `;
+}

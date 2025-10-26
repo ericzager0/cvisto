@@ -13,7 +13,7 @@ export default async function CVsPage() {
     <div className="mx-auto flex flex-col gap-4 my-[40px] max-w-[1200px] px-4">
       <h1 className="text-4xl">Mis CVs</h1>
       {cvs.length === 0 ? (
-        <div className="flex flex-col border rounded-lg items-center justify-center p-8 gap-3">
+        <div className="flex flex-col items-center justify-center p-8 gap-3">
           <div className="bg-[#F5F5F5] p-2 rounded-lg">
             <FolderOpen />
           </div>

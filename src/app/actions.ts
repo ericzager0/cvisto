@@ -19,6 +19,9 @@ import {
   addLanguage as addLanguageMutation,
   editLanguage as editLanguageMutation,
   deleteLanguage as deleteLanguageMutation,
+  addExperience as addExperienceMutation,
+  editExperience as editExperienceMutation,
+  deleteExperience as deleteExperienceMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -27,6 +30,7 @@ import {
   getLinkOwnerById,
   getSkillOwnerById,
   getLanguageOwnerById,
+  getExperienceOwnerById,
 } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 import { v4 as uuidv4 } from "uuid";
@@ -207,6 +211,65 @@ export async function deleteEducation(educationId: number) {
 
   if (session?.user?.id === educationOwnerId) {
     await deleteEducationMutation(educationId);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function addExperience(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  await addExperienceMutation(
+    session?.user?.id as string,
+    formData.get("title") as string,
+    formData.get("company") as string,
+    formData.get("description") as string,
+    formData.get("startYear") as string,
+    formData.get("startMonth") as string,
+    formData.get("endYear") as string,
+    formData.get("endMonth") as string
+  );
+
+  revalidatePath("/profile");
+
+  return { success: true };
+}
+
+export async function editExperience(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  const experienceId = Number(formData.get("experienceId"));
+  const experienceOwnerId = await getExperienceOwnerById(experienceId);
+
+  if (session?.user?.id === experienceOwnerId) {
+    await editExperienceMutation(
+      experienceId,
+      formData.get("title") as string,
+      formData.get("company") as string,
+      formData.get("description") as string,
+      formData.get("startYear") as string,
+      formData.get("startMonth") as string,
+      formData.get("endYear") as string,
+      formData.get("endMonth") as string
+    );
+
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function deleteExperience(experienceId: number) {
+  const session = await auth();
+  const experienceOwnerId = await getExperienceOwnerById(experienceId);
+
+  if (session?.user?.id === experienceOwnerId) {
+    await deleteExperienceMutation(experienceId);
     revalidatePath("/profile");
 
     return { success: true };
