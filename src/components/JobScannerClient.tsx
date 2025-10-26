@@ -53,6 +53,8 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(analysis);
+
   const handleAnalyze = async () => {
     if (!jobText.trim()) {
       setError("Por favor pegá el texto del aviso");
@@ -122,16 +124,11 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Input Section */}
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">
-            Texto del Aviso de Trabajo
-          </label>
-          <Textarea
-            value={jobText}
-            onChange={(e) => setJobText(e.target.value)}
-            placeholder="Pegá aquí el texto completo del aviso de trabajo...
+        <Textarea
+          value={jobText}
+          onChange={(e) => setJobText(e.target.value)}
+          placeholder="Pegá aquí el texto muy completo del aviso de trabajo...
 
 Ejemplo:
 Título: Desarrollador Full Stack
@@ -144,16 +141,15 @@ Requisitos:
 - 3+ años de experiencia
 - TypeScript
 - etc."
-            rows={15}
-            className="resize-y min-h-[300px]"
-          />
-        </div>
+          rows={15}
+          className="resize-y min-h-[300px]"
+        />
 
         <div className="flex gap-2">
           <Button
             onClick={handleAnalyze}
             disabled={loading || !jobText.trim()}
-            className="flex gap-2"
+            className="flex gap-2 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90"
           >
             <Sparkles className="h-4 w-4" />
             {loading ? "Analizando..." : "Analizar Aviso"}
@@ -196,12 +192,11 @@ Requisitos:
                     ¡Excelente coincidencia!
                   </span>
                 )}
-                {analysis.matchScore >= 60 &&
-                  analysis.matchScore < 80 && (
-                    <span className="text-sm text-yellow-700 font-medium">
-                      Buena coincidencia
-                    </span>
-                  )}
+                {analysis.matchScore >= 60 && analysis.matchScore < 80 && (
+                  <span className="text-sm text-yellow-700 font-medium">
+                    Buena coincidencia
+                  </span>
+                )}
                 {analysis.matchScore < 60 && (
                   <span className="text-sm text-red-700 font-medium">
                     Necesitás mejorar algunas áreas

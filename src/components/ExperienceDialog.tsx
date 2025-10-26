@@ -167,7 +167,7 @@ function Experience({
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Label>Fecha de fin</Label>
+        <Label>Fecha de fin (si no se incluye se asume que continúa)</Label>
         <div className="flex gap-2">
           <Select
             defaultValue={endMonth}
