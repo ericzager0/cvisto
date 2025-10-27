@@ -21,9 +21,9 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
     startTransition(async () => {
       const formData = new FormData();
       formData.append("skill", inputValue.trim());
-      
+
       const result = await addSkill({}, formData);
-      
+
       if (result.success) {
         setInputValue("");
         setTimeout(() => {
@@ -48,7 +48,7 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <Input
           ref={inputRef}
           type="text"
@@ -63,24 +63,30 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
           onClick={handleAddSkill}
           disabled={isPending || !inputValue.trim()}
           type="button"
-          className="disabled:opacity-50 cursor-pointer"
+          className="
+            p-1 rounded-full 
+            disabled:opacity-50 
+            disabled:cursor-default 
+          enabled:hover:bg-gray-100 
+            enabled:cursor-pointer
+          "
         >
           <Plus size={18} />
         </button>
       </div>
-      
+
       {skills && skills.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {skills.map((skill) => (
             <div
               key={skill.id}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium hover:bg-primary/20 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100  text-primary rounded-full text-sm font-medium"
             >
               <span>{skill.skill}</span>
               <button
                 onClick={() => handleDeleteSkill(skill.id)}
                 disabled={isPending}
-                className="ml-1 hover:bg-primary/30 rounded-full p-0.5 transition-colors disabled:opacity-50"
+                className="ml-1 hover:bg-primary/10 rounded-full p-0.5 transition-colors disabled:opacity-50 cursor-pointer"
                 type="button"
                 aria-label={`Eliminar ${skill.skill}`}
               >
