@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, KeyboardEvent, useTransition } from "react";
+import { useState, KeyboardEvent, useTransition, useRef } from "react";
 import { addSkill, deleteSkill } from "@/app/actions";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { X, Plus } from "lucide-react";
 
 interface Skill {
@@ -14,6 +13,7 @@ interface Skill {
 export default function SkillsPills({ skills }: { skills?: Skill[] }) {
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddSkill = async () => {
     if (!inputValue.trim()) return;
@@ -26,6 +26,9 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
       
       if (result.success) {
         setInputValue("");
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
       }
     });
   };
@@ -47,6 +50,7 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
     <div className="flex flex-col gap-3">
       <div className="flex gap-2">
         <Input
+          ref={inputRef}
           type="text"
           placeholder="Agregar habilidad"
           value={inputValue}
@@ -55,14 +59,14 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
           disabled={isPending}
           className="flex-1"
         />
-        <Button
+        <button
           onClick={handleAddSkill}
           disabled={isPending || !inputValue.trim()}
-          size="icon"
           type="button"
+          className="disabled:opacity-50 cursor-pointer"
         >
-          <Plus className="h-4 w-4" />
-        </Button>
+          <Plus size={18} />
+        </button>
       </div>
       
       {skills && skills.length > 0 && (
