@@ -47,7 +47,7 @@ export default function SkillsPills({ skills }: { skills: Skill[] }) {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center">
         <Input
           ref={inputRef}
@@ -57,7 +57,6 @@ export default function SkillsPills({ skills }: { skills: Skill[] }) {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isPending}
-          className="flex-1"
         />
         <button
           onClick={handleAddSkill}
@@ -80,7 +79,7 @@ export default function SkillsPills({ skills }: { skills: Skill[] }) {
           {skills.map((skill) => (
             <div
               key={skill.id}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100  text-primary rounded-full text-sm font-medium"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100  text-primary rounded-full text-sm"
             >
               <span>{skill.skill}</span>
               <button

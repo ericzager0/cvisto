@@ -30,6 +30,18 @@ CREATE TABLE IF NOT EXISTS public.educations
     CONSTRAINT educations_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.experiences
+(
+    id bigserial NOT NULL,
+    user_id uuid NOT NULL,
+    title text COLLATE pg_catalog."default" NOT NULL,
+    company text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    start_date date,
+    end_date date,
+    CONSTRAINT experiences_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS public.languages
 (
     id bigserial NOT NULL,
@@ -69,12 +81,11 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
-CREATE TABLE IF NOT EXISTS public.experiences
+CREATE TABLE IF NOT EXISTS public.projects
 (
     id bigserial NOT NULL,
     user_id uuid NOT NULL,
-    title text NOT NULL,
-    company text NOT NULL,
+    name text NOT NULL,
     description text,
     start_date date,
     end_date date,
@@ -91,6 +102,14 @@ ALTER TABLE IF EXISTS public.cvs
 
 ALTER TABLE IF EXISTS public.educations
     ADD CONSTRAINT educations_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.experiences
+    ADD CONSTRAINT experiences_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
@@ -121,7 +140,7 @@ ALTER TABLE IF EXISTS public.skills
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.experiences
+ALTER TABLE IF EXISTS public.projects
     ADD FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION

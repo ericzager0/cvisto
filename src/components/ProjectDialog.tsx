@@ -14,7 +14,7 @@ import {
   SelectItem,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { addExperience, editExperience, deleteExperience } from "@/app/actions";
+import { addProject, editProject, deleteProject } from "@/app/actions";
 import { getMonth, getYear } from "@/lib/utils";
 
 const months = [
@@ -32,13 +32,12 @@ const months = [
   "Diciembre",
 ];
 
-export default function ExperienceDialog({
+export default function ProjectDialog({
   initialValue,
 }: {
   initialValue?: {
     id: number;
-    title: string;
-    company: string;
+    name: string;
     startDate: string;
     endDate: string;
     description: string;
@@ -46,15 +45,15 @@ export default function ExperienceDialog({
 }) {
   return (
     <FormDialog
-      title={initialValue ? "Editar experiencia" : "Agregar experiencia"}
+      title={initialValue ? "Editar proyecto" : "Agregar proyecto"}
       description="Compartí la información que consideres relevante."
-      action={initialValue ? editExperience : addExperience}
+      action={initialValue ? editProject : addProject}
       type={initialValue ? "edit" : "add"}
-      onDelete={initialValue ? deleteExperience : undefined}
+      onDelete={initialValue ? deleteProject : undefined}
       id={initialValue?.id}
     >
       {(pending, actionStarted, _picturePreview, _handleFileChange, open) => (
-        <Experience
+        <Project
           initialValue={initialValue}
           pending={pending}
           actionStarted={actionStarted}
@@ -65,7 +64,7 @@ export default function ExperienceDialog({
   );
 }
 
-function Experience({
+function Project({
   initialValue,
   pending,
   actionStarted,
@@ -73,8 +72,7 @@ function Experience({
 }: {
   initialValue?: {
     id: number;
-    title: string;
-    company: string;
+    name: string;
     startDate: string;
     endDate: string;
     description: string;
@@ -101,31 +99,18 @@ function Experience({
   return (
     <div className="flex flex-col gap-3">
       {initialValue && (
-        <input type="hidden" value={initialValue.id} name="experienceId" />
+        <input type="hidden" value={initialValue.id} name="projectId" />
       )}
       <div className="flex flex-col gap-2">
-        <Label htmlFor="title">Título</Label>
+        <Label htmlFor="name">Nombre</Label>
         <Input
-          id="title"
-          name="title"
+          id="name"
+          name="name"
           placeholder="Título"
           disabled={pending || actionStarted.saving || actionStarted.deleting}
           pattern=".*\S.*"
           required
-          defaultValue={initialValue ? initialValue.title : ""}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="company">Compañía u organización</Label>
-        <Input
-          id="company"
-          name="company"
-          type="text"
-          placeholder="Compañía u organización"
-          disabled={pending || actionStarted.saving || actionStarted.deleting}
-          pattern=".*\S.*"
-          required
-          defaultValue={initialValue ? initialValue.company : ""}
+          defaultValue={initialValue ? initialValue.name : ""}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -205,9 +190,9 @@ function Experience({
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="experience-description">Descripción</Label>
+        <Label htmlFor="project-description">Descripción</Label>
         <Textarea
-          id="experience-description"
+          id="project-description"
           name="description"
           className="resize-none h-32"
           style={{ overflowWrap: "break-word", wordBreak: "break-word" }}

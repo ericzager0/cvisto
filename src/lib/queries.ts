@@ -98,7 +98,18 @@ export async function getUserProfileById(id: string) {
         FROM experiences e
         WHERE e.user_id = u.id
       ), '[]'
-    ) AS experiences
+    ) AS experiences,
+    COALESCE(
+      (
+        SELECT jsonb_agg(
+          jsonb_build_object(
+            'id', p.id, 'name', p.name, 'description', p.description, 'startDate', p.start_date, 'endDate', p.end_date
+          )
+        )
+        FROM projects p
+        WHERE p.user_id = u.id
+      ), '[]'
+    ) AS projects
   FROM users u
   WHERE u.id = ${id};
     `;
@@ -160,6 +171,16 @@ export async function getLanguageOwnerById(id: number) {
   const result = await sql`
   SELECT user_id as "userId"
   FROM languages
+  WHERE id = ${id}
+  `;
+
+  return result[0].userId;
+}
+
+export async function getProjectOwnerById(id: number) {
+  const result = await sql`
+  SELECT user_id as "userId"
+  FROM projects
   WHERE id = ${id}
   `;
 

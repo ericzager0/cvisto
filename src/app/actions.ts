@@ -21,6 +21,9 @@ import {
   addExperience as addExperienceMutation,
   editExperience as editExperienceMutation,
   deleteExperience as deleteExperienceMutation,
+  addProject as addProjectMutation,
+  editProject as editProjectMutation,
+  deleteProject as deleteProjectMutation,
 } from "@/lib/mutations";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
@@ -30,6 +33,7 @@ import {
   getSkillOwnerById,
   getLanguageOwnerById,
   getExperienceOwnerById,
+  getProjectOwnerById,
 } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 import { v4 as uuidv4 } from "uuid";
@@ -269,6 +273,63 @@ export async function deleteExperience(experienceId: number) {
 
   if (session?.user?.id === experienceOwnerId) {
     await deleteExperienceMutation(experienceId);
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function addProject(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  await addProjectMutation(
+    session?.user?.id as string,
+    formData.get("name") as string,
+    formData.get("description") as string,
+    formData.get("startYear") as string,
+    formData.get("startMonth") as string,
+    formData.get("endYear") as string,
+    formData.get("endMonth") as string
+  );
+
+  revalidatePath("/profile");
+
+  return { success: true };
+}
+
+export async function editProject(_initialState: any, formData: FormData) {
+  const session = await auth();
+
+  const projectId = Number(formData.get("projectId"));
+  const projectOwnerId = await getProjectOwnerById(projectId);
+
+  if (session?.user?.id === projectOwnerId) {
+    await editProjectMutation(
+      projectId,
+      formData.get("name") as string,
+      formData.get("description") as string,
+      formData.get("startYear") as string,
+      formData.get("startMonth") as string,
+      formData.get("endYear") as string,
+      formData.get("endMonth") as string
+    );
+
+    revalidatePath("/profile");
+
+    return { success: true };
+  }
+
+  return { success: false };
+}
+
+export async function deleteProject(projectId: number) {
+  const session = await auth();
+  const projectOwnerId = await getProjectOwnerById(projectId);
+
+  if (session?.user?.id === projectOwnerId) {
+    await deleteProjectMutation(projectId);
     revalidatePath("/profile");
 
     return { success: true };

@@ -240,3 +240,49 @@ export async function deleteExperience(id: number) {
   WHERE id = ${id}
   `;
 }
+
+export async function addProject(
+  userId: string,
+  name: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  INSERT INTO projects
+  (user_id, name, description, start_date, end_date)
+  VALUES
+  (${userId}, ${cleanString(name)}, ${cleanString(description)}, ${formatDate(
+    startMonth,
+    startYear
+  )}, ${formatDate(endMonth, endYear)})
+  `;
+}
+
+export async function editProject(
+  id: number,
+  name: string,
+  description: string,
+  startYear: string,
+  startMonth: string,
+  endYear: string,
+  endMonth: string
+) {
+  await sql`
+  UPDATE projects
+  SET name = ${cleanString(name)},
+      description = ${cleanString(description)},
+      start_date = ${formatDate(startMonth, startYear)},
+      end_date = ${formatDate(endMonth, endYear)}
+  WHERE id = ${id}
+  `;
+}
+
+export async function deleteProject(id: number) {
+  await sql`
+  DELETE FROM projects
+  WHERE id = ${id}
+  `;
+}

@@ -16,6 +16,8 @@ import LanguageDialog from "@/components/LanguageDialog";
 import LanguageCard from "@/components/LanguageCard";
 import ExperienceDialog from "@/components/ExperienceDialog";
 import ExperienceCard from "@/components/ExperienceCard";
+import ProjectDialog from "@/components/ProjectDialog";
+import ProjectCard from "@/components/ProjectCard";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -180,6 +182,52 @@ export default async function ProfilePage() {
                     id,
                     degree,
                     school,
+                    startDate,
+                    endDate,
+                    description,
+                  }}
+                />
+              </div>
+            )
+          )
+        ) : (
+          <NoContentParagraph />
+        )}
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2 justify-between">
+          <h2 className="text-lg font-semibold">Proyectos</h2>
+          <ProjectDialog />
+        </div>
+        {profile.projects.length > 0 ? (
+          profile.projects.map(
+            ({
+              id,
+              name,
+              endDate,
+              startDate,
+              description,
+            }: {
+              id: number;
+              name: string;
+              endDate: string;
+              startDate: string;
+              description: string;
+            }) => (
+              <div key={id} className="flex gap-2 justify-between">
+                <ProjectCard
+                  name={name}
+                  startDate={startDate}
+                  endDate={endDate}
+                  description={description}
+                />
+                <ProjectDialog
+                  initialValue={{
+                    id,
+                    name,
                     startDate,
                     endDate,
                     description,

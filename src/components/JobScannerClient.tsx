@@ -60,8 +60,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(analysis);
-
   const handleAnalyze = async () => {
     if (!jobText.trim()) {
       setError("Por favor pegá el texto del aviso");
