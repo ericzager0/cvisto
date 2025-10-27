@@ -14,6 +14,10 @@ En desarrollo activo.
 - **Autenticación**: Auth.js (Google como proveedor).
 - **Interfaz y diseño**: shadcn/ui (componentes basados en Radix UI), Tailwind CSS, Lucide Icons.
 
+## Esquema de la base de datos
+
+![Database schema](db/diagram.png)
+
 ## Screenshots
 
 ### Landing page
