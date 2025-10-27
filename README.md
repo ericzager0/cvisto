@@ -13,6 +13,7 @@ En desarrollo activo.
 - **Almacenamiento de archivos**: Cloudinary, para gestión y entrega optimizada de imágenes y documentos.
 - **Autenticación**: Auth.js (Google como proveedor).
 - **Interfaz y diseño**: shadcn/ui (componentes basados en Radix UI), Tailwind CSS, Lucide Icons.
+- **Servicios / APIs externas**: Google AI Studio (Gemini API) — Inteligencia artificial para generación de contenido y procesamiento de lenguaje natural.
 
 ## Esquema de la base de datos
 
