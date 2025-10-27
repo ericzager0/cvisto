@@ -100,7 +100,7 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Experiencia</h2>
           <ExperienceDialog />
         </div>
-        {profile.experiences ? (
+        {profile.experiences.length > 0 ? (
           profile.experiences.map(
             ({
               id,
@@ -150,7 +150,7 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Educación</h2>
           <EducationDialog />
         </div>
-        {profile.educations ? (
+        {profile.educations.length > 0 ? (
           profile.educations.map(
             ({
               id,
@@ -200,7 +200,7 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Enlaces</h2>
           <AddLinkDialog />
         </div>
-        {profile.links ? (
+        {profile.links.length > 0 ? (
           profile.links.map(({ id, link }: { id: number; link: string }) => (
             <div key={id} className="flex gap-2 justify-between">
               <p>{link}</p>
@@ -219,7 +219,7 @@ export default async function ProfilePage() {
           <h2 className="text-lg font-semibold">Idiomas</h2>
           <LanguageDialog />
         </div>
-        {profile.languages ? (
+        {profile.languages.length > 0 ? (
           profile.languages.map(
             ({
               id,

@@ -10,7 +10,7 @@ interface Skill {
   skill: string;
 }
 
-export default function SkillsPills({ skills }: { skills?: Skill[] }) {
+export default function SkillsPills({ skills }: { skills: Skill[] }) {
   const [inputValue, setInputValue] = useState("");
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,7 +75,7 @@ export default function SkillsPills({ skills }: { skills?: Skill[] }) {
         </button>
       </div>
 
-      {skills && skills.length > 0 && (
+      {skills.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {skills.map((skill) => (
             <div

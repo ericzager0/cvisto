@@ -140,23 +140,23 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <Textarea
           value={jobText}
           onChange={(e) => setJobText(e.target.value)}
-          placeholder={`Pegá aquí el texto muy completo del aviso de trabajo...\n\nEjemplo:\nTítulo: Desarrollador Full Stack\nUbicación: Buenos Aires, Argentina\n\nDescripción:\nBuscamos un desarrollador con experiencia en React y Node.js...\n\nRequisitos:\n- 3+ años de experiencia\n- TypeScript\n- etc.`}
+          placeholder={`Ejemplo:\nTítulo: Desarrollador Full Stack\nUbicación: Buenos Aires, Argentina\n\nDescripción:\nBuscamos un desarrollador con experiencia en React y Node.js...\n\nRequisitos:\n- 3+ años de experiencia\n- TypeScript\n- etc.`}
           rows={15}
-          className="resize-y min-h-[300px]"
+          className="resize-y min-h-[240px]"
         />
 
         <div className="flex gap-2">
           <Button
             onClick={handleAnalyze}
             disabled={loading || !jobText.trim()}
-            className="flex gap-2 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90"
+            className="flex gap-1 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 cursor-pointer"
           >
             <Sparkles className="h-4 w-4" />
-            {loading ? "Analizando..." : "Analizar Aviso"}
+            {loading ? "Analizando..." : "Analizar aviso"}
           </Button>
         </div>
 

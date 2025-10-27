@@ -13,7 +13,6 @@ import {
   editEducation as editEducationMutation,
   deleteEducation as deleteEducationMutation,
   addSkill as addSkillMutation,
-  editSkill as editSkillMutation,
   deleteSkill as deleteSkillMutation,
   addCV as addCVMutation,
   addLanguage as addLanguageMutation,

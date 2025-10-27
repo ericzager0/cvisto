@@ -94,14 +94,6 @@ export async function addSkill(skill: string, userId: string) {
   `;
 }
 
-export async function editSkill(skillId: number, newSkill: string) {
-  await sql`
-  UPDATE skills
-  SET skill = ${newSkill}
-  WHERE id = ${skillId}
-  `;
-}
-
 export async function deleteSkill(id: number) {
   await sql`
   DELETE FROM skills
