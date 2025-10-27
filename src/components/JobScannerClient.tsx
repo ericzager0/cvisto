@@ -144,16 +144,17 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
         <Textarea
           value={jobText}
           onChange={(e) => setJobText(e.target.value)}
-          placeholder={`Ejemplo:\nTítulo: Desarrollador Full Stack\nUbicación: Buenos Aires, Argentina\n\nDescripción:\nBuscamos un desarrollador con experiencia en React y Node.js...\n\nRequisitos:\n- 3+ años de experiencia\n- TypeScript\n- etc.`}
+          placeholder={`Título: Desarrollador Full Stack\n\nUbicación: Buenos Aires, Argentina\n\nDescripción: Buscamos un desarrollador con experiencia en React y Node.js...\n\nRequisitos:\n- 3+ años de experiencia\n- TypeScript\n- etc.`}
           rows={15}
-          className="resize-y min-h-[240px]"
+          className="resize-y min-h-[220px]"
+          disabled={loading}
         />
 
         <div className="flex gap-2">
           <Button
             onClick={handleAnalyze}
             disabled={loading || !jobText.trim()}
-            className="flex gap-1 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 cursor-pointer"
+            className="bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 cursor-pointer"
           >
             <Sparkles className="h-4 w-4" />
             {loading ? "Analizando..." : "Analizar aviso"}
@@ -223,7 +224,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
             {/* Keywords */}
             <div className="flex flex-col gap-3">
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
+                <Sparkles />
                 Palabras Clave del Aviso
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -353,13 +354,12 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               )}
             </div>
 
-            {/* Generate CV Button */}
-            <div className="flex justify-center p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
-              <Button size="lg" className="flex gap-2">
-                <FileText className="h-5 w-5" />
-                Generar CV Personalizado
-              </Button>
-            </div>
+            <Separator />
+
+            <Button className="self-center bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 cursor-pointer">
+              <FileText />
+              Generar CV Personalizado
+            </Button>
           </div>
         </>
       )}
