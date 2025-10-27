@@ -24,7 +24,7 @@ export default async function ProfilePage() {
   const profile = await getUserProfileById(session?.user?.id!);
 
   return (
-    <div className="mx-auto flex flex-col gap-4 my-[40px] max-w-[900px] px-4">
+    <div className="mx-auto flex flex-col gap-6 my-[40px] max-w-[900px] px-4">
       <div className="flex flex-col items-center gap-4">
         <Avatar className="w-32 h-32 border">
           <AvatarImage src={profile.profilePicture} />
