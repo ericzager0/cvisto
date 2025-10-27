@@ -15,35 +15,6 @@ export async function getUserProfilePictureById(id: string) {
   return result[0]?.profile_picture;
 }
 
-type Profile = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePicture: string | null;
-  bio: string | null;
-  phoneNumber: string | null;
-  location: string | null;
-  links: { id: string; link: string }[];
-  educations: {
-    id: string;
-    school: string;
-    degree: string;
-    description: string | null;
-    startDate: string | null;
-    endDate: string | null;
-  }[];
-  skills: { id: string; skill: string }[];
-  languages: { id: string; name: string; proficiency: string }[];
-  experiences: {
-    id: string;
-    title: string;
-    company: string;
-    description: string | null;
-    startDate: string | null;
-    endDate: string | null;
-  }[];
-};
-
 export async function getUserProfileById(id: string) {
   const result = await sql`
     SELECT
