@@ -30,6 +30,13 @@ interface Profile {
     startDate?: string;
     endDate?: string;
   }>;
+  experiences?: Array<{
+    title: string;
+    company: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
+  }>;
   links?: Array<{ link: string }>;
 }
 
@@ -74,7 +81,16 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
         location: profile.location || "",
         about: profile.bio || "",
         skills: profile.skills?.map((s) => s.skill) || [],
-        experience: [], // TODO: agregar cuando tengas experiencia en el perfil
+        experience:
+          profile.experiences?.map((exp) => ({
+            role: exp.title,
+            company: exp.company,
+            description: exp.description || "",
+            startDate: exp.startDate || "",
+            endDate: exp.endDate || "",
+            current: !exp.endDate,
+            achievements: [], // Se puede agregar más adelante si lo necesitás
+          })) || [],
         education:
           profile.educations?.map((edu) => ({
             institution: edu.school,
@@ -128,19 +144,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
         <Textarea
           value={jobText}
           onChange={(e) => setJobText(e.target.value)}
-          placeholder="Pegá aquí el texto muy completo del aviso de trabajo...
-
-Ejemplo:
-Título: Desarrollador Full Stack
-Ubicación: Buenos Aires, Argentina
-
-Descripción:
-Buscamos un desarrollador con experiencia en React y Node.js...
-
-Requisitos:
-- 3+ años de experiencia
-- TypeScript
-- etc."
+          placeholder={`Pegá aquí el texto muy completo del aviso de trabajo...\n\nEjemplo:\nTítulo: Desarrollador Full Stack\nUbicación: Buenos Aires, Argentina\n\nDescripción:\nBuscamos un desarrollador con experiencia en React y Node.js...\n\nRequisitos:\n- 3+ años de experiencia\n- TypeScript\n- etc.`}
           rows={15}
           className="resize-y min-h-[300px]"
         />
@@ -223,14 +227,20 @@ Requisitos:
                 Palabras Clave del Aviso
               </h3>
               <div className="flex flex-wrap gap-2">
-                {analysis.keywords.map((kw, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-                  >
-                    {kw}
-                  </span>
-                ))}
+                {analysis.keywords && analysis.keywords.length > 0 ? (
+                  analysis.keywords.map((kw, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                    >
+                      {kw}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No se encontraron palabras clave
+                  </p>
+                )}
               </div>
             </div>
 
@@ -244,14 +254,20 @@ Requisitos:
                     Requisitos Imprescindibles
                   </h3>
                 </div>
-                <ul className="space-y-2">
-                  {analysis.must_haves.map((req, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="text-green-600 mt-0.5">•</span>
-                      <span className="text-gray-700">{req}</span>
-                    </li>
-                  ))}
-                </ul>
+                {analysis.must_haves && analysis.must_haves.length > 0 ? (
+                  <ul className="space-y-2">
+                    {analysis.must_haves.map((req, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <span className="text-green-600 mt-0.5">•</span>
+                        <span className="text-gray-700">{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No se encontraron requisitos imprescindibles
+                  </p>
+                )}
               </div>
 
               {/* Nice to Haves */}
@@ -262,19 +278,25 @@ Requisitos:
                     Requisitos Deseables
                   </h3>
                 </div>
-                <ul className="space-y-2">
-                  {analysis.nice_to_haves.map((req, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="text-blue-600 mt-0.5">•</span>
-                      <span className="text-gray-700">{req}</span>
-                    </li>
-                  ))}
-                </ul>
+                {analysis.nice_to_haves && analysis.nice_to_haves.length > 0 ? (
+                  <ul className="space-y-2">
+                    {analysis.nice_to_haves.map((req, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <span className="text-blue-600 mt-0.5">•</span>
+                        <span className="text-gray-700">{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No se encontraron requisitos deseables
+                  </p>
+                )}
               </div>
             </div>
 
             {/* Gaps */}
-            {analysis.gaps.length > 0 && (
+            {analysis.gaps && analysis.gaps.length > 0 ? (
               <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center gap-2">
                   <TrendingDown className="h-5 w-5 text-red-600" />
@@ -291,6 +313,18 @@ Requisitos:
                   ))}
                 </ul>
               </div>
+            ) : (
+              <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  <h3 className="font-semibold text-green-900">
+                    Brechas Identificadas
+                  </h3>
+                </div>
+                <p className="text-sm text-green-700 font-medium">
+                  ¡Excelente! No se encontraron brechas significativas
+                </p>
+              </div>
             )}
 
             {/* Suggestions */}
@@ -301,16 +335,22 @@ Requisitos:
                   Sugerencias de Mejora
                 </h3>
               </div>
-              <ul className="space-y-3">
-                {analysis.suggestions.map((sug, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-medium uppercase flex-shrink-0 mt-0.5">
-                      {sug.category}
-                    </span>
-                    <span className="text-sm text-gray-700">{sug.text}</span>
-                  </li>
-                ))}
-              </ul>
+              {analysis.suggestions && analysis.suggestions.length > 0 ? (
+                <ul className="space-y-3">
+                  {analysis.suggestions.map((sug, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-medium uppercase flex-shrink-0 mt-0.5">
+                        {sug.category}
+                      </span>
+                      <span className="text-sm text-gray-700">{sug.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No se encontraron sugerencias de mejora
+                </p>
+              )}
             </div>
 
             {/* Generate CV Button */}
