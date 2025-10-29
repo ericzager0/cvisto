@@ -29,10 +29,11 @@ export async function POST(request: NextRequest) {
 
     const prompt = `
 Eres un experto en recursos humanos y análisis de ofertas laborales.
+
 FORMATO DE RESPUESTA:
-Debes responder ÚNICAMENTE con un objeto JSON válido. NO incluyas explicaciones, comentarios, ni texto adicional.
-NO uses backticks ni marcadores de código.
-ASEGÚRATE de que todos los strings estén correctamente escapados y cerrados.
+- Debes responder ÚNICAMENTE con un objeto JSON válido. NO incluyas explicaciones, comentarios, ni texto adicional.
+- NO uses backticks ni marcadores de código.
+- ASEGÚRATE de que todos los strings estén correctamente escapados y cerrados.
 
 TAREAS:
 1. Extraer las palabras clave más importantes del aviso
@@ -63,7 +64,9 @@ Devuelve JSON con esta estructura:
   "suggestions": [
     {"text": "Agregá experiencia en X", "category": "skill"}
   ]
-}\n\nPERFIL DEL CANDIDATO:
+}
+  
+PERFIL DEL CANDIDATO:
 Nombre: ${profile.firstName}
 Apellido: ${profile.lastName}
 Email: ${profile.email}
@@ -119,9 +122,12 @@ ${profile.languages
   .join("\n")}`
     : ""
 }
-\nOFERTA DE TRABAJO: ${jobText}
-Analizá esta oferta y el perfil del candidato, y devolvé el análisis en formato JSON.
-Respond ONLY with valid JSON.`;
+
+INICIO OFERTA DE TRABAJO:
+${jobText}
+FIN OFERTA DE TRABAJO.
+
+Analizá la oferta, el perfil del candidato y devolvé el análisis en formato JSON. Respond ONLY with valid JSON.`;
 
     console.log(prompt);
 
