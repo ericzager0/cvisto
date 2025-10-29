@@ -13,17 +13,9 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// Función reutilizable para generar los datos del CV
-export async function generateCvDataLogic(profile: any, analysis: any) {
-  console.log("Generando datos del CV con Gemini...");
-
-  if (!profile || !analysis) {
-    throw new Error("Missing required fields: profile and analysis");
-  }
-
-    // Construir el prompt
-    const systemPrompt = `
-      Eres un experto en redacción de CVs y recursos humanos con años de experiencia ayudando a candidatos a destacarse.
+function buildPrompt(profile: any, analysis: any) {
+  const systemPrompt = `
+Eres un experto en redacción de CVs y recursos humanos con años de experiencia ayudando a candidatos a destacarse.
       
       FORMATO DE RESPUESTA:
       Debes responder ÚNICAMENTE con un objeto JSON válido. NO incluyas explicaciones, comentarios, ni texto adicional.
@@ -307,7 +299,19 @@ export async function generateCvDataLogic(profile: any, analysis: any) {
       las posibilidades del candidato para esta oferta específica. Devuelve el resultado en el formato JSON especificado.
     `;
 
-    const fullPrompt = `${systemPrompt}\n\n${userPrompt}\n\nRespond ONLY with valid JSON.`;
+  return `${systemPrompt}\n\n${userPrompt}\n\nRespond ONLY with valid JSON.`;
+}
+
+// Función reutilizable para generar los datos del CV
+export async function generateCvDataLogic(profile: any, analysis: any) {
+  console.log("Generando datos del CV con Gemini...");
+
+  if (!profile || !analysis) {
+    throw new Error("Missing required fields: profile and analysis");
+  }
+
+  // Construir el prompt usando la función buildPrompt
+  const fullPrompt = buildPrompt(profile, analysis);
 
   // Llamar a Gemini
   console.log("Generating CV data with Gemini...");
