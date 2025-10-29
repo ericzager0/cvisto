@@ -31,6 +31,8 @@ export default async function Navbar() {
           <div className="flex gap-[32px] items-center">
             <NavLink href="/job-scanner">Scanner</NavLink>
             <NavLink href="/cvs">CVs</NavLink>
+            <NavLink href="/postulaciones">Postulaciones</NavLink>
+            <NavLink href="/potenciar-perfil">Potenciar Perfil</NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger
                 id="navbar-dropdown-menu-trigger"
