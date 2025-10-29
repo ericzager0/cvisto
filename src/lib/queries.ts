@@ -15,8 +15,44 @@ export async function getUserProfilePictureById(id: string) {
   return result[0]?.profile_picture;
 }
 
-export async function getUserProfileById(id: string) {
-  const result = await sql`
+export interface Profile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePicture: string;
+  bio: string;
+  phoneNumber: string;
+  location: string;
+  links: { id: number; link: string }[];
+  educations: {
+    id: number;
+    degree: string;
+    school: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+  skills: { id: number; skill: string }[];
+  languages: { id: number; name: string; proficiency: string }[];
+  experiences: {
+    id: number;
+    title: string;
+    company: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+  projects: {
+    id: number;
+    name: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+}
+
+export async function getUserProfileById(id: string): Promise<Profile> {
+  const result = await sql<Profile[]>`
     SELECT
     u.first_name AS "firstName",
     u.last_name AS "lastName",

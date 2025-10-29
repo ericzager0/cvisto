@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Profile } from "@/lib/queries";
 
-// Inicializar Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp",
@@ -15,7 +15,10 @@ const model = genAI.getGenerativeModel({
 
 export async function POST(request: NextRequest) {
   try {
-    const { profile, jobText } = await request.json();
+    const { profile, jobText }: { profile: Profile; jobText: string } =
+      await request.json();
+
+    console.log(profile);
 
     if (!profile || !jobText) {
       return NextResponse.json(
@@ -26,7 +29,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Construir el prompt
     const systemPrompt = `
       Eres un experto en recursos humanos y análisis de ofertas laborales.
       FORMATO DE RESPUESTA:
@@ -68,18 +70,19 @@ export async function POST(request: NextRequest) {
 
     const profileSummary = `
       PERFIL DEL CANDIDATO:
-      Nombre: ${profile.name}
-      Ubicación: ${profile.location}
+      Nombre: ${profile.firstName}
+      Apellido: ${profile.lastName}
       Email: ${profile.email}
-      Sobre mí:${profile.about || "No especificado"}
+      Ubicación: ${profile.location}
+      Sobre mí:${profile.bio || "No especificado"}
       Habilidades:${profile.skills?.join(", ") || "No especificadas"}
       Experiencia:
         ${
-          profile.experience?.length > 0
-            ? profile.experience
+          profile.experiences?.length > 0
+            ? profile.experiences
                 .map(
                   (exp: any) =>
-                    `- ${exp.role} en ${exp.company} (${
+                    `- ${exp.title} en ${exp.company} (${
                       exp.current ? "Actual" : "Finalizado"
                     })
         ${exp.description || ""}
@@ -90,8 +93,8 @@ export async function POST(request: NextRequest) {
         }
       Educación:
       ${
-        profile.education?.length > 0
-          ? profile.education
+        profile.educations?.length > 0
+          ? profile.educations
               .map(
                 (edu: any) =>
                   `- ${edu.degree} en ${edu.field}, ${edu.institution}`

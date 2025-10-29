@@ -13,32 +13,7 @@ import {
   TrendingDown,
   Lightbulb,
 } from "lucide-react";
-
-interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  location?: string;
-  bio?: string;
-  profilePicture?: string;
-  skills?: Array<{ skill: string }>;
-  educations?: Array<{
-    school: string;
-    degree: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-  }>;
-  experiences?: Array<{
-    title: string;
-    company: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-  }>;
-  links?: Array<{ link: string }>;
-}
+import { Profile } from "@/lib/queries";
 
 interface AnalysisResult {
   keywords: string[];
@@ -71,40 +46,10 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
     setAnalysis(null);
 
     try {
-      // Transformar el perfil al formato esperado por la API
-      const profileData = {
-        name: `${profile.firstName} ${profile.lastName}`,
-        email: profile.email,
-        phone: profile.phoneNumber || "",
-        location: profile.location || "",
-        about: profile.bio || "",
-        skills: profile.skills?.map((s) => s.skill) || [],
-        experience:
-          profile.experiences?.map((exp) => ({
-            role: exp.title,
-            company: exp.company,
-            description: exp.description || "",
-            startDate: exp.startDate || "",
-            endDate: exp.endDate || "",
-            current: !exp.endDate,
-            achievements: [], // Se puede agregar más adelante si lo necesitás
-          })) || [],
-        education:
-          profile.educations?.map((edu) => ({
-            institution: edu.school,
-            degree: edu.degree,
-            field: edu.description || "",
-            startDate: edu.startDate || "",
-            endDate: edu.endDate || "",
-            current: !edu.endDate,
-          })) || [],
-        projects: [], // TODO: agregar cuando tengas proyectos en el perfil
-      };
-
       const response = await fetch("/api/analyze-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: profileData, jobText }),
+        body: JSON.stringify({ profile, jobText }),
       });
 
       const data = await response.json();
@@ -167,13 +112,11 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
         )}
       </div>
 
-      {/* Results Section */}
       {analysis && (
         <>
           <Separator />
 
           <div className="flex flex-col gap-6">
-            {/* Match Score */}
             <div className="flex items-center justify-center">
               <div
                 className={`flex flex-col items-center gap-2 p-8 rounded-xl ${getMatchBgColor(
@@ -208,7 +151,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               </div>
             </div>
 
-            {/* Summary */}
             <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-blue-600" />
@@ -219,7 +161,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
             </div>
 
-            {/* Keywords */}
             <div className="flex flex-col gap-3">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Sparkles />
@@ -243,9 +184,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               </div>
             </div>
 
-            {/* Requirements Grid */}
             <div className="grid md:grid-cols-2 gap-4">
-              {/* Must Haves */}
               <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -269,7 +208,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
                 )}
               </div>
 
-              {/* Nice to Haves */}
               <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-blue-600" />
@@ -294,7 +232,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               </div>
             </div>
 
-            {/* Gaps */}
             {analysis.gaps && analysis.gaps.length > 0 ? (
               <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -326,7 +263,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
               </div>
             )}
 
-            {/* Suggestions */}
             <div className="flex flex-col gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-yellow-600" />
