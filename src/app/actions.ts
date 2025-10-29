@@ -460,3 +460,20 @@ export async function deleteLanguage(languageId: number) {
 
   return { success: false };
 }
+
+export async function generateCvData(profile: any, analysis: any) {
+  console.log("Acción de Servidor: 'generateCvData' iniciada.");
+  
+  // Importar dinámicamente la función de lógica del endpoint
+  const { generateCvDataLogic } = await import("@/app/api/generate-cv-data/route");
+  
+  try {
+    console.log("Acción de Servidor: Llamando a la lógica de generación...");
+    const cvData = await generateCvDataLogic(profile, analysis);
+    console.log("Acción de Servidor: Datos del CV generados exitosamente.");
+    return cvData;
+  } catch (error) {
+    console.error("Acción de Servidor: Error al generar datos del CV:", error);
+    throw error;
+  }
+}
