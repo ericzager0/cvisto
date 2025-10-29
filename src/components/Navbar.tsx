@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/auth";
+import { ScanSearch, FileText, Briefcase, Sparkles } from "lucide-react";
 
 export default async function Navbar() {
   const session = await auth();
@@ -29,10 +30,10 @@ export default async function Navbar() {
         </Link>
         {session ? (
           <div className="flex gap-[32px] items-center">
-            <NavLink href="/job-scanner">Scanner</NavLink>
-            <NavLink href="/cvs">CVs</NavLink>
-            <NavLink href="/postulaciones">Postulaciones</NavLink>
-            <NavLink href="/potenciar-perfil">Potenciar Perfil</NavLink>
+            <NavLink href="/job-scanner" icon={ScanSearch}>Scanner</NavLink>
+            <NavLink href="/cvs" icon={FileText}>CVs</NavLink>
+            <NavLink href="/postulaciones" icon={Briefcase}>Postulaciones</NavLink>
+            <NavLink href="/potenciar-perfil" icon={Sparkles}>Potenciar Perfil</NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger
                 id="navbar-dropdown-menu-trigger"
