@@ -166,26 +166,53 @@ export function generateCVDocument(data: CVData): Document {
       // Intentar parsear la fecha
       const dateStr = edu.expected_graduation;
       const today = new Date();
-      
+
       // Intentar diferentes formatos de fecha
       let graduationDate: Date | null = null;
-      
+
       // Formato "Mes AAAA" o "MMM AAAA"
       const monthYearMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{4})$/);
       if (monthYearMatch) {
         const monthNames: { [key: string]: number } = {
-          'ene': 0, 'enero': 0, 'jan': 0, 'january': 0,
-          'feb': 1, 'febrero': 1, 'february': 1,
-          'mar': 2, 'marzo': 2, 'march': 2,
-          'abr': 3, 'abril': 3, 'apr': 3, 'april': 3,
-          'may': 4, 'mayo': 4,
-          'jun': 5, 'junio': 5, 'june': 5,
-          'jul': 6, 'julio': 6, 'july': 6,
-          'ago': 7, 'agosto': 7, 'aug': 7, 'august': 7,
-          'sep': 8, 'septiembre': 8, 'september': 8,
-          'oct': 9, 'octubre': 9, 'october': 9,
-          'nov': 10, 'noviembre': 10, 'november': 10,
-          'dic': 11, 'diciembre': 11, 'dec': 11, 'december': 11,
+          ene: 0,
+          enero: 0,
+          jan: 0,
+          january: 0,
+          feb: 1,
+          febrero: 1,
+          february: 1,
+          mar: 2,
+          marzo: 2,
+          march: 2,
+          abr: 3,
+          abril: 3,
+          apr: 3,
+          april: 3,
+          may: 4,
+          mayo: 4,
+          jun: 5,
+          junio: 5,
+          june: 5,
+          jul: 6,
+          julio: 6,
+          july: 6,
+          ago: 7,
+          agosto: 7,
+          aug: 7,
+          august: 7,
+          sep: 8,
+          septiembre: 8,
+          september: 8,
+          oct: 9,
+          octubre: 9,
+          october: 9,
+          nov: 10,
+          noviembre: 10,
+          november: 10,
+          dic: 11,
+          diciembre: 11,
+          dec: 11,
+          december: 11,
         };
         const monthStr = monthYearMatch[1].toLowerCase();
         const year = parseInt(monthYearMatch[2]);
@@ -194,7 +221,7 @@ export function generateCVDocument(data: CVData): Document {
           graduationDate = new Date(year, month, 1);
         }
       }
-      
+
       // Formato "MM/AAAA"
       const mmYYYYMatch = dateStr.match(/^(\d{2})\/(\d{4})$/);
       if (mmYYYYMatch) {
@@ -202,7 +229,7 @@ export function generateCVDocument(data: CVData): Document {
         const year = parseInt(mmYYYYMatch[2]);
         graduationDate = new Date(year, month, 1);
       }
-      
+
       // Si logramos parsear la fecha, verificar si ya pasó
       if (graduationDate && graduationDate <= today) {
         graduationPrefix = "Graduado ";
@@ -221,7 +248,9 @@ export function generateCVDocument(data: CVData): Document {
             italics: true,
           }),
           new TextRun({
-            text: `\t${graduationPrefix}${edu.expected_graduation || "[Graduation Date]"}`,
+            text: `\t${graduationPrefix}${
+              edu.expected_graduation || "[Graduation Date]"
+            }`,
           }),
         ],
         tabStops: [
@@ -379,8 +408,9 @@ export function generateCVDocument(data: CVData): Document {
     );
 
     data.projects_independent.forEach((project) => {
-      const stackText = project.stack.length > 0 ? ` (${project.stack.join(", ")})` : "";
-      
+      const stackText =
+        project.stack.length > 0 ? ` (${project.stack.join(", ")})` : "";
+
       sections.push(
         new Paragraph({
           spacing: { after: 50 },
@@ -594,7 +624,10 @@ export function generateCVDocument(data: CVData): Document {
   // Volunteering/Activities
   if (data.volunteering && data.volunteering.length > 0) {
     const volText = data.volunteering
-      .map((v) => `${v.role} en ${v.organization} (${v.start_date} - ${v.end_date})`)
+      .map(
+        (v) =>
+          `${v.role} en ${v.organization} (${v.start_date} - ${v.end_date})`
+      )
       .join("; ");
     sections.push(
       new Paragraph({

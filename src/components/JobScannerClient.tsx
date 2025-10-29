@@ -16,46 +16,7 @@ import {
 import { generateCvData } from "@/app/actions";
 import { generateCVDocument } from "@/lib/cvGenerator";
 import { Packer } from "docx";
-
-interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  location?: string;
-  bio?: string;
-  profilePicture?: string;
-  skills?: Array<{ id: number; skill: string }>;
-  educations?: Array<{
-    id: number;
-    school: string;
-    degree: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-  }>;
-  experiences?: Array<{
-    id: number;
-    title: string;
-    company: string;
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-  }>;
-  links?: Array<{ id: number; link: string }>;
-  projects?: Array<{
-    id: number;
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-  }>;
-  languages?: Array<{
-    id: number;
-    name: string;
-    proficiency: string;
-  }>;
-}
+import { Profile } from "@/lib/queries";
 
 interface AnalysisResult {
   keywords: string[];
@@ -137,45 +98,11 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
     setAnalysis(null);
 
     try {
-      // Transformar el perfil al formato esperado por la API de análisis
-      const profileDataForAnalysis = {
-        name: `${profile.firstName} ${profile.lastName}`,
-        email: profile.email,
-        phone: profile.phoneNumber || "",
-        location: profile.location || "",
-        about: profile.bio || "",
-        skills: profile.skills?.map((s) => s.skill) || [],
-        experience:
-          profile.experiences?.map((exp) => ({
-            role: exp.title,
-            company: exp.company,
-            description: exp.description || "",
-            startDate: exp.startDate || "",
-            endDate: exp.endDate || "",
-            current: !exp.endDate,
-            achievements: [],
-          })) || [],
-        education:
-          profile.educations?.map((edu) => ({
-            institution: edu.school,
-            degree: edu.degree,
-            field: edu.description || "",
-            startDate: edu.startDate || "",
-            endDate: edu.endDate || "",
-            current: !edu.endDate,
-          })) || [],
-        projects:
-          profile.projects?.map((p) => ({
-            title: p.name,
-            description: p.description,
-          })) || [],
-      };
-
       const response = await fetch("/api/analyze-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          profile: profileDataForAnalysis,
+          profile,
           jobText,
         }),
       });
