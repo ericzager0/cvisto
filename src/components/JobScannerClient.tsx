@@ -13,6 +13,9 @@ import {
   TrendingDown,
   Lightbulb,
 } from "lucide-react";
+import { generateCvData } from "@/app/actions";
+import { generateCVDocument } from "@/lib/cvGenerator";
+import { Packer } from "docx";
 
 interface Profile {
   firstName: string;
@@ -22,8 +25,9 @@ interface Profile {
   location?: string;
   bio?: string;
   profilePicture?: string;
-  skills?: Array<{ skill: string }>;
+  skills?: Array<{ id: number; skill: string }>;
   educations?: Array<{
+    id: number;
     school: string;
     degree: string;
     description?: string;
@@ -31,13 +35,26 @@ interface Profile {
     endDate?: string;
   }>;
   experiences?: Array<{
+    id: number;
     title: string;
     company: string;
     description?: string;
     startDate?: string;
     endDate?: string;
   }>;
-  links?: Array<{ link: string }>;
+  links?: Array<{ id: number; link: string }>;
+  projects?: Array<{
+    id: number;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+  }>;
+  languages?: Array<{
+    id: number;
+    name: string;
+    proficiency: string;
+  }>;
 }
 
 interface AnalysisResult {
@@ -59,6 +76,53 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [generatingCv, setGeneratingCv] = useState(false);
+
+  const handleGenerateCv = async () => {
+    console.log("Botón 'Generar CV' presionado. Iniciando proceso...");
+    if (!analysis || !profile) {
+      console.error(
+        "No se puede generar el CV. Faltan datos:",
+        { analysis, profile }
+      );
+      return;
+    }
+
+    setGeneratingCv(true);
+    setError(null);
+    try {
+      console.log("Llamando a la acción de servidor 'generateCvData'...");
+      const cvData = await generateCvData(profile, analysis);
+      console.log("Éxito. Datos del CV recibidos:", cvData);
+
+      // Generar el documento DOCX
+      console.log("Generando documento DOCX...");
+      const doc = generateCVDocument(cvData);
+
+      // Convertir a blob y descargar
+      const blob = await Packer.toBlob(doc);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `CV_${profile.firstName}_${profile.lastName}_${new Date().toISOString().split("T")[0]}.docx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log("Documento DOCX descargado exitosamente.");
+    } catch (error) {
+      console.error("Error al generar los datos del CV:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al generar el CV"
+      );
+    } finally {
+      console.log("Proceso 'Generar CV' finalizado.");
+      setGeneratingCv(false);
+    }
+  };
 
   const handleAnalyze = async () => {
     if (!jobText.trim()) {
@@ -71,8 +135,8 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
     setAnalysis(null);
 
     try {
-      // Transformar el perfil al formato esperado por la API
-      const profileData = {
+      // Transformar el perfil al formato esperado por la API de análisis
+      const profileDataForAnalysis = {
         name: `${profile.firstName} ${profile.lastName}`,
         email: profile.email,
         phone: profile.phoneNumber || "",
@@ -87,7 +151,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
             startDate: exp.startDate || "",
             endDate: exp.endDate || "",
             current: !exp.endDate,
-            achievements: [], // Se puede agregar más adelante si lo necesitás
+            achievements: [],
           })) || [],
         education:
           profile.educations?.map((edu) => ({
@@ -98,13 +162,20 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
             endDate: edu.endDate || "",
             current: !edu.endDate,
           })) || [],
-        projects: [], // TODO: agregar cuando tengas proyectos en el perfil
+        projects:
+          profile.projects?.map((p) => ({
+            title: p.name,
+            description: p.description,
+          })) || [],
       };
 
       const response = await fetch("/api/analyze-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: profileData, jobText }),
+        body: JSON.stringify({
+          profile: profileDataForAnalysis,
+          jobText,
+        }),
       });
 
       const data = await response.json();
@@ -173,10 +244,10 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
           <Separator />
 
           <div className="flex flex-col gap-6">
-            {/* Match Score */}
-            <div className="flex items-center justify-center">
+            {/* Match Score & Generate CV Button */}
+            <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 p-4 bg-white rounded-lg shadow">
               <div
-                className={`flex flex-col items-center gap-2 p-8 rounded-xl ${getMatchBgColor(
+                className={`flex flex-col items-center gap-2 p-6 rounded-xl ${getMatchBgColor(
                   analysis.matchScore
                 )}`}
               >
@@ -184,7 +255,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
                   Tu Match Score
                 </span>
                 <span
-                  className={`text-6xl font-bold ${getMatchColor(
+                  className={`text-5xl sm:text-6xl font-bold ${getMatchColor(
                     analysis.matchScore
                   )}`}
                 >
@@ -202,14 +273,28 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
                 )}
                 {analysis.matchScore < 60 && (
                   <span className="text-sm text-red-700 font-medium">
-                    Necesitás mejorar algunas áreas
+                    Necesita mejoras
                   </span>
                 )}
               </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <Button
+                  onClick={handleGenerateCv}
+                  disabled={generatingCv || loading}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  {generatingCv ? "Generando CV..." : "Generar CV optimizado"}
+                </Button>
+                <p className="text-xs text-gray-500 text-center max-w-[200px]">
+                  Crea una versión de tu CV adaptada a esta oferta.
+                </p>
+              </div>
             </div>
 
-            {/* Summary */}
-            <div className="flex flex-col gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            {/* Summary for Recruiter */}
+            <div className="p-4 bg-gray-50 rounded-lg border">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-blue-600" />
                 <h3 className="font-semibold text-blue-900">
@@ -351,13 +436,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
                 </p>
               )}
             </div>
-
-            <Separator />
-
-            <Button className="self-center bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 cursor-pointer">
-              <FileText />
-              Generar CV Personalizado
-            </Button>
           </div>
         </>
       )}
