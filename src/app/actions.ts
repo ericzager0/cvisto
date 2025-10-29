@@ -15,6 +15,7 @@ import {
   addSkill as addSkillMutation,
   deleteSkill as deleteSkillMutation,
   addCV as addCVMutation,
+  deleteCV as deleteCVMutation,
   addLanguage as addLanguageMutation,
   editLanguage as editLanguageMutation,
   deleteLanguage as deleteLanguageMutation,
@@ -34,6 +35,7 @@ import {
   getLanguageOwnerById,
   getExperienceOwnerById,
   getProjectOwnerById,
+  getCVById,
 } from "@/lib/queries";
 import cloudinary from "@/lib/cloudinary";
 import { v4 as uuidv4 } from "uuid";
@@ -407,7 +409,7 @@ export async function addCV(_initialState: any, formData: FormData) {
 
   const newUrl = (uploadResult as any).secure_url;
 
-  await addCVMutation(newId, session?.user?.id as string, newUrl);
+  await addCVMutation(newId, session?.user?.id as string, newUrl, file.name, false);
   revalidatePath("/profile");
 
   return { success: true };
@@ -475,5 +477,101 @@ export async function generateCvData(profile: any, analysis: any) {
   } catch (error) {
     console.error("Acción de Servidor: Error al generar datos del CV:", error);
     throw error;
+  }
+}
+
+export async function generateAndSaveCv(
+  profile: any,
+  analysis: any,
+  cvName: string,
+  includePhoto: boolean,
+  docxBuffer: ArrayBuffer
+) {
+  console.log("Acción de Servidor: 'generateAndSaveCv' iniciada.");
+  
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  try {
+    // Importar la función de upload
+    const { uploadCVToCloudinary } = await import("@/lib/cloudinary");
+    
+    // Generar ID único para el CV
+    const cvId = uuidv4();
+    
+    // Convertir ArrayBuffer a Buffer
+    const buffer = Buffer.from(docxBuffer);
+    
+    // Subir a Cloudinary (el nombre se construye dentro de uploadCVToCloudinary)
+    console.log("Subiendo CV a Cloudinary...");
+    const cloudinaryUrl = await uploadCVToCloudinary(
+      buffer,
+      session.user.id,
+      cvName
+    );
+    
+    // Guardar en la base de datos
+    console.log("Guardando CV en la base de datos...");
+    await addCVMutation(cvId, session.user.id, cloudinaryUrl, cvName, includePhoto);
+    
+    console.log("CV guardado exitosamente:", { cvId, url: cloudinaryUrl });
+    
+    revalidatePath("/cvs");
+    
+    return { success: true, cvId, url: cloudinaryUrl };
+  } catch (error) {
+    console.error("Error al generar y guardar CV:", error);
+    throw error;
+  }
+}
+
+export async function deleteCVAction(cvId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Usuario no autenticado" };
+  }
+
+  try {
+    // Verificar que el CV pertenezca al usuario
+    const cv = await getCVById(cvId);
+    if (!cv || cv.userId !== session.user.id) {
+      return { success: false, error: "CV no encontrado o no autorizado" };
+    }
+
+    // Extraer el public_id de la URL de Cloudinary
+    // URL ejemplo: https://res.cloudinary.com/dl8hanqpm/raw/upload/v1761757959/cvs/userId/CV_20251029153045_Name.docx
+    const urlParts = cv.url.split('/');
+    const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+    if (versionIndex !== -1) {
+      // Obtener todo después de la versión (cvs/userId/filename.docx)
+      const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+      // Para archivos raw, el public_id debe incluir la extensión
+      const publicId = pathAfterVersion;
+      
+      console.log("=== ELIMINANDO CV DE CLOUDINARY ===");
+      console.log("URL:", cv.url);
+      console.log("Public ID:", publicId);
+      
+      // Eliminar de Cloudinary
+      try {
+        const result = await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+        console.log("Resultado de eliminación de Cloudinary:", result);
+      } catch (cloudinaryError) {
+        console.error("Error al eliminar de Cloudinary:", cloudinaryError);
+        // Continuar con la eliminación de la BD aunque falle Cloudinary
+      }
+    }
+
+    // Eliminar de la base de datos
+    await deleteCVMutation(cvId);
+    
+    revalidatePath("/cvs");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error al eliminar CV:", error);
+    return { success: false, error: "Error al eliminar el CV" };
   }
 }

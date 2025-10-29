@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS public.cvs
     id uuid NOT NULL,
     user_id uuid NOT NULL,
     url text COLLATE pg_catalog."default" NOT NULL,
+    title text COLLATE pg_catalog."default" NOT NULL,
+    has_photo boolean NOT NULL DEFAULT false,
+    created_timestamp timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_timestamp timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT cvs_pkey PRIMARY KEY (id)
 );
 

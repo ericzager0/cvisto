@@ -193,3 +193,62 @@ export async function getProjectOwnerById(id: number) {
 
   return result[0].userId;
 }
+
+export interface CV {
+  id: string;
+  userId: string;
+  url: string;
+  title: string;
+  hasPhoto: boolean;
+  createdTimestamp: Date;
+  modifiedTimestamp: Date;
+}
+
+export async function getCVsByUserId(userId: string, page: number = 1, limit: number = 12) {
+  const offset = (page - 1) * limit;
+  
+  const result = await sql<CV[]>`
+    SELECT 
+      id,
+      user_id as "userId",
+      url,
+      title,
+      has_photo as "hasPhoto",
+      created_timestamp as "createdTimestamp",
+      modified_timestamp as "modifiedTimestamp"
+    FROM cvs
+    WHERE user_id = ${userId}
+    ORDER BY created_timestamp DESC
+    LIMIT ${limit}
+    OFFSET ${offset}
+  `;
+
+  return result;
+}
+
+export async function getTotalCVsByUserId(userId: string) {
+  const result = await sql`
+    SELECT COUNT(*) as count
+    FROM cvs
+    WHERE user_id = ${userId}
+  `;
+
+  return Number(result[0].count);
+}
+
+export async function getCVById(cvId: string) {
+  const result = await sql<CV[]>`
+    SELECT 
+      id,
+      user_id as "userId",
+      url,
+      title,
+      has_photo as "hasPhoto",
+      created_timestamp as "createdTimestamp",
+      modified_timestamp as "modifiedTimestamp"
+    FROM cvs
+    WHERE id = ${cvId}
+  `;
+
+  return result[0];
+}

@@ -13,10 +13,11 @@ import {
   TrendingDown,
   Lightbulb,
 } from "lucide-react";
-import { generateCvData } from "@/app/actions";
+import { generateCvData, generateAndSaveCv } from "@/app/actions";
 import { generateCVDocument } from "@/lib/cvGenerator";
 import { Packer } from "docx";
 import { Profile } from "@/lib/queries";
+import GenerateCVDialog from "@/components/GenerateCVDialog";
 
 interface AnalysisResult {
   keywords: string[];
@@ -38,9 +39,14 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [generatingCv, setGeneratingCv] = useState(false);
+  const [cvDialogOpen, setCvDialogOpen] = useState(false);
 
-  const handleGenerateCv = async () => {
+  const handleGenerateCv = async (options: {
+    cvName: string;
+    includePhoto: boolean;
+  }) => {
     console.log("Botón 'Generar CV' presionado. Iniciando proceso...");
+    console.log("Opciones:", options);
     if (!analysis || !profile) {
       console.error("No se puede generar el CV. Faltan datos:", {
         analysis,
@@ -51,6 +57,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
 
     setGeneratingCv(true);
     setError(null);
+    setCvDialogOpen(false); // Cerrar el diálogo
     try {
       console.log("Llamando a la acción de servidor 'generateCvData'...");
       const cvData = await generateCvData(profile, analysis);
@@ -58,22 +65,29 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
 
       // Generar el documento DOCX
       console.log("Generando documento DOCX...");
-      const doc = generateCVDocument(cvData);
+      const doc = generateCVDocument(cvData, options.includePhoto);
 
-      // Convertir a blob y descargar
+      // Convertir a blob
       const blob = await Packer.toBlob(doc);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `CV_${profile.firstName}_${profile.lastName}_${
-        new Date().toISOString().split("T")[0]
-      }.docx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      
+      // Convertir blob a ArrayBuffer para enviarlo al servidor
+      const arrayBuffer = await blob.arrayBuffer();
+      
+      // Guardar en Cloudinary y en la BD
+      console.log("Guardando CV en Cloudinary y base de datos...");
+      const result = await generateAndSaveCv(
+        profile,
+        analysis,
+        options.cvName,
+        options.includePhoto,
+        arrayBuffer
+      );
+      
+      console.log("CV guardado exitosamente:", result);
+      
+      // TODO: Redirigir a la página del CV
+      // window.location.href = `/cvs/${result.cvId}`;
 
-      console.log("Documento DOCX descargado exitosamente.");
     } catch (error) {
       console.error("Error al generar los datos del CV:", error);
       setError(
@@ -208,7 +222,7 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
 
               <div className="flex flex-col items-center gap-2">
                 <Button
-                  onClick={handleGenerateCv}
+                  onClick={() => setCvDialogOpen(true)}
                   disabled={generatingCv || loading}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
@@ -361,6 +375,13 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
           </div>
         </>
       )}
+
+      <GenerateCVDialog
+        open={cvDialogOpen}
+        onOpenChange={setCvDialogOpen}
+        onGenerate={handleGenerateCv}
+        loading={generatingCv}
+      />
     </div>
   );
 }
