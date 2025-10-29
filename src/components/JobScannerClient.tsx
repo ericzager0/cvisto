@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -34,6 +35,7 @@ interface JobScannerClientProps {
 }
 
 export default function JobScannerClient({ profile }: JobScannerClientProps) {
+  const router = useRouter();
   const [jobText, setJobText] = useState("");
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -85,8 +87,8 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
       
       console.log("CV guardado exitosamente:", result);
       
-      // TODO: Redirigir a la página del CV
-      // window.location.href = `/cvs/${result.cvId}`;
+      // Redirigir a la página del CV
+      router.push(`/cvs/${result.cvId}`);
 
     } catch (error) {
       console.error("Error al generar los datos del CV:", error);
@@ -95,8 +97,6 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
           ? error.message
           : "Error desconocido al generar el CV"
       );
-    } finally {
-      console.log("Proceso 'Generar CV' finalizado.");
       setGeneratingCv(false);
     }
   };
