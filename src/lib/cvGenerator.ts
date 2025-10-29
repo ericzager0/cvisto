@@ -84,7 +84,10 @@ interface CVData {
   interests: string[];
 }
 
-export function generateCVDocument(data: CVData): Document {
+export function generateCVDocument(
+  data: CVData,
+  includePhoto: boolean = false
+): Document {
   const sections: Paragraph[] = [];
 
   // ========== HEADER ==========

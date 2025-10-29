@@ -149,12 +149,25 @@ export async function deleteEducation(id: number) {
   `;
 }
 
-export async function addCV(id: string, userId: string, url: string) {
+export async function addCV(
+  id: string,
+  userId: string,
+  url: string,
+  title: string,
+  hasPhoto: boolean
+) {
   await sql`
   INSERT INTO cvs
-  (id, user_id, url)
+  (id, user_id, url, title, has_photo)
   VALUES
-  (${id}, ${userId}, ${url})
+  (${id}, ${userId}, ${url}, ${title}, ${hasPhoto})
+  `;
+}
+
+export async function deleteCV(cvId: string) {
+  await sql`
+  DELETE FROM cvs
+  WHERE id = ${cvId}
   `;
 }
 
