@@ -37,7 +37,7 @@ export default function CVEditorWrapper({ cvId, cvData }: CVEditorWrapperProps) 
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-none w-[96vw] h-[96vh] max-h-[96vh] flex flex-col p-0 gap-0">
+        <DialogContent className="!max-w-none w-[98vw] h-[96vh] max-h-[96vh] flex flex-col p-0 gap-0">
           <div className="px-8 pt-6 pb-4 border-b shrink-0">
             <DialogHeader>
               <DialogTitle className="text-2xl">Editor de CV</DialogTitle>
