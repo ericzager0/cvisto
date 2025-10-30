@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/auth";
-import { ScanSearch, FileText, Briefcase, Sparkles } from "lucide-react";
+import { ScanSearch, FileText, Briefcase, Sparkles, Info } from "lucide-react";
 
 export default async function Navbar() {
   const session = await auth();
@@ -54,6 +54,14 @@ export default async function Navbar() {
                     className="w-full px-2 cursor-pointer"
                   >
                     Mi perfil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={"/info"}
+                    className="w-full px-2 cursor-pointer"
+                  >
+                    Información
                   </Link>
                 </DropdownMenuItem>
                 <form
