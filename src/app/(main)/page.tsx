@@ -1,7 +1,9 @@
 import Link from "next/link";
 import LandingCard from "@/components/LandingCard";
+import Dashboard from "@/components/Dashboard";
 import { FileText, Palette, Target, Pencil, Search, Bot } from "lucide-react";
 import { auth } from "../../auth";
+import { getJobApplicationsByUserId, getUserProfileById } from "@/lib/queries";
 
 const cards = [
   {
@@ -42,9 +44,34 @@ const cards = [
   },
 ];
 
-export default async function LandingPage() {
+export default async function HomePage() {
   const session = await auth();
 
+  // Si el usuario está logueado, mostrar Dashboard
+  if (session) {
+    const applications = await getJobApplicationsByUserId(session.user?.id!);
+    const profile = await getUserProfileById(session.user?.id!);
+    
+    // Verificar si el perfil está completo
+    const profileComplete = !!(
+      profile.bio &&
+      profile.phoneNumber &&
+      profile.location &&
+      profile.experiences.length > 0 &&
+      profile.educations.length > 0 &&
+      profile.skills.length > 0
+    );
+
+    return (
+      <Dashboard 
+        userName={profile.firstName}
+        applications={applications}
+        profileComplete={profileComplete}
+      />
+    );
+  }
+
+  // Si no está logueado, mostrar Landing Page
   return (
     <div className="flex flex-col gap-12 items-center p-8">
       <div className="flex flex-col items-center gap-4 max-w-[900px] mt-[30px]">
