@@ -485,7 +485,8 @@ export async function generateAndSaveCv(
   analysis: any,
   cvName: string,
   includePhoto: boolean,
-  docxBuffer: ArrayBuffer
+  docxBuffer: ArrayBuffer,
+  cvData: any
 ) {
   console.log("Acción de Servidor: 'generateAndSaveCv' iniciada.");
   
@@ -512,9 +513,17 @@ export async function generateAndSaveCv(
       cvName
     );
     
-    // Guardar en la base de datos
+    // Guardar en la base de datos con analysis y cvData
     console.log("Guardando CV en la base de datos...");
-    await addCVMutation(cvId, session.user.id, cloudinaryUrl, cvName, includePhoto);
+    await addCVMutation(
+      cvId, 
+      session.user.id, 
+      cloudinaryUrl, 
+      cvName, 
+      includePhoto,
+      analysis,
+      cvData
+    );
     
     console.log("CV guardado exitosamente:", { cvId, url: cloudinaryUrl });
     
@@ -573,5 +582,60 @@ export async function deleteCVAction(cvId: string) {
   } catch (error) {
     console.error("Error al eliminar CV:", error);
     return { success: false, error: "Error al eliminar el CV" };
+  }
+}
+
+export async function updateCVAction(cvId: string, updatedCvData: any) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Usuario no autenticado" };
+  }
+
+  try {
+    // Verificar que el CV pertenezca al usuario
+    const cv = await getCVById(cvId);
+    if (!cv || cv.userId !== session.user.id) {
+      return { success: false, error: "CV no encontrado o no autorizado" };
+    }
+
+    // Regenerar el DOCX con los datos actualizados
+    const { generateCVDocument } = await import("@/lib/cvGenerator");
+    const { Packer } = await import("docx");
+    
+    const doc = generateCVDocument(updatedCvData, cv.hasPhoto);
+    const blob = await Packer.toBlob(doc);
+    const buffer = Buffer.from(await blob.arrayBuffer());
+
+    // Subir el nuevo DOCX a Cloudinary
+    const { uploadCVToCloudinary } = await import("@/lib/cloudinary");
+    const cloudinaryUrl = await uploadCVToCloudinary(
+      buffer,
+      session.user.id,
+      cv.title
+    );
+
+    // Eliminar el CV antiguo de Cloudinary
+    const urlParts = cv.url.split('/');
+    const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+    if (versionIndex !== -1) {
+      const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+      try {
+        await cloudinary.uploader.destroy(pathAfterVersion, { resource_type: 'raw' });
+      } catch (cloudinaryError) {
+        console.error("Error al eliminar CV antiguo de Cloudinary:", cloudinaryError);
+      }
+    }
+
+    // Actualizar en la base de datos
+    const { updateCV } = await import("@/lib/mutations");
+    await updateCV(cvId, updatedCvData, cloudinaryUrl);
+
+    revalidatePath(`/cvs/${cvId}`);
+    revalidatePath("/cvs");
+
+    return { success: true, url: cloudinaryUrl };
+  } catch (error) {
+    console.error("Error al actualizar CV:", error);
+    return { success: false, error: "Error al actualizar el CV" };
   }
 }

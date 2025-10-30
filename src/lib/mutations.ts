@@ -154,13 +154,15 @@ export async function addCV(
   userId: string,
   url: string,
   title: string,
-  hasPhoto: boolean
+  hasPhoto: boolean,
+  analysisData?: any,
+  cvData?: any
 ) {
   await sql`
   INSERT INTO cvs
-  (id, user_id, url, title, has_photo)
+  (id, user_id, url, title, has_photo, analysis_data, cv_data)
   VALUES
-  (${id}, ${userId}, ${url}, ${title}, ${hasPhoto})
+  (${id}, ${userId}, ${url}, ${title}, ${hasPhoto}, ${analysisData ? sql.json(analysisData) : null}, ${cvData ? sql.json(cvData) : null})
   `;
 }
 
@@ -168,6 +170,27 @@ export async function deleteCV(cvId: string) {
   await sql`
   DELETE FROM cvs
   WHERE id = ${cvId}
+  `;
+}
+
+export async function updateCV(
+  cvId: string,
+  cvData: any,
+  url?: string
+) {
+  const updateFields: any = {
+    cv_data: sql.json(cvData),
+    modified_timestamp: sql`CURRENT_TIMESTAMP`
+  };
+
+  if (url) {
+    updateFields.url = url;
+  }
+
+  await sql`
+    UPDATE cvs
+    SET ${sql(updateFields)}
+    WHERE id = ${cvId}
   `;
 }
 

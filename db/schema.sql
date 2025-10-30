@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS public.cvs
     has_photo boolean NOT NULL DEFAULT false,
     created_timestamp timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_timestamp timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    analysis_data jsonb,
+    cv_data jsonb,
     CONSTRAINT cvs_pkey PRIMARY KEY (id)
 );
 

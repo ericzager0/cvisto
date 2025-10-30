@@ -5,6 +5,8 @@ import { Download, Edit, Trash2, Calendar, Image, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DeleteCVButton from "@/components/DeleteCVButton";
+import AnalysisView from "@/components/AnalysisView";
+import CVEditorWrapper from "@/components/CVEditorWrapper";
 
 export default async function CVPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -80,25 +82,23 @@ export default async function CVPage({ params }: { params: Promise<{ id: string 
         <div className="flex flex-wrap gap-3">
           <a
             href={cv.url}
-            download
+            download={`${cv.title}.docx`}
             className="inline-flex items-center justify-center gap-2 h-10 px-4 py-2 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 text-white rounded-md text-sm font-medium transition-all"
           >
             <Download className="h-4 w-4" />
             Descargar CV
           </a>
 
-          <Button
-            variant="outline"
-            disabled
-            className="opacity-50 cursor-not-allowed"
-          >
-            <Edit className="h-4 w-4" />
-            Editar (Próximamente)
-          </Button>
+          <CVEditorWrapper cvId={cv.id} cvData={cv.cvData} />
 
           <DeleteCVButton cvId={cv.id} cvTitle={cv.title} />
         </div>
       </div>
+
+      {/* Análisis del trabajo */}
+      {cv.analysisData && (
+        <AnalysisView analysis={cv.analysisData} />
+      )}
 
       {/* Información adicional */}
       <div className="border rounded-lg p-4 bg-gray-50">

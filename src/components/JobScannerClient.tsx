@@ -82,7 +82,8 @@ export default function JobScannerClient({ profile }: JobScannerClientProps) {
         analysis,
         options.cvName,
         options.includePhoto,
-        arrayBuffer
+        arrayBuffer,
+        cvData
       );
       
       console.log("CV guardado exitosamente:", result);

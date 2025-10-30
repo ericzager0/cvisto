@@ -202,6 +202,8 @@ export interface CV {
   hasPhoto: boolean;
   createdTimestamp: Date;
   modifiedTimestamp: Date;
+  analysisData?: any;
+  cvData?: any;
 }
 
 export async function getCVsByUserId(userId: string, page: number = 1, limit: number = 12) {
@@ -245,7 +247,9 @@ export async function getCVById(cvId: string) {
       title,
       has_photo as "hasPhoto",
       created_timestamp as "createdTimestamp",
-      modified_timestamp as "modifiedTimestamp"
+      modified_timestamp as "modifiedTimestamp",
+      analysis_data as "analysisData",
+      cv_data as "cvData"
     FROM cvs
     WHERE id = ${cvId}
   `;
