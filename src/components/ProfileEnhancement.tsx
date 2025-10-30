@@ -129,10 +129,10 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 bg-purple-50 rounded-lg border border-purple-200">
-        <Spinner className="h-8 w-8 mb-4" />
-        <p className="text-purple-700 font-medium">Generando recomendaciones personalizadas...</p>
-        <p className="text-sm text-purple-600 mt-2">Esto puede tomar unos segundos</p>
+      <div className="flex flex-col items-center justify-center p-12 bg-[#F3F0F9] rounded-lg border border-[#5D3A9B]">
+        <Spinner className="h-8 w-8 mb-4 text-[#5D3A9B]" />
+        <p className="font-medium text-[#5D3A9B]">Generando recomendaciones personalizadas...</p>
+        <p className="text-sm mt-2 text-[#5D3A9B]">Esto puede tomar unos segundos</p>
       </div>
     );
   }
@@ -154,8 +154,8 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
 
   if (!recommendations) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg border-2 border-purple-200">
-        <TrendingUp className="h-16 w-16 text-purple-500 mb-4" />
+      <div className="flex flex-col items-center justify-center p-12 bg-[#F3F0F9] rounded-lg border-2 border-[#5D3A9B]">
+        <TrendingUp className="h-16 w-16 mb-4 text-[#5D3A9B]" />
         <h3 className="text-xl font-bold text-gray-900 mb-2">Potenciá tu perfil</h3>
         <p className="text-gray-600 text-center mb-6 max-w-md">
           Obtené recomendaciones personalizadas de habilidades para aprender y proyectos para construir
@@ -164,7 +164,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
           onClick={generateRecommendations}
           className="bg-[#5D3A9B] hover:bg-[#4A2D7C] text-white"
         >
-          <Sparkles className="mr-2 h-4 w-4" />
+          <Sparkles className="mr-2 h-4 w-4 text-white" />
           Generar recomendaciones
         </Button>
       </div>
@@ -178,7 +178,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
         <Button
           onClick={generateRecommendations}
           variant="outline"
-          className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 ml-auto"
+          className="text-[#5D3A9B] hover:text-white hover:bg-[#5D3A9B] border-[#5D3A9B] ml-auto"
         >
           <RefreshCw className="mr-2 h-4 w-4" />
           Regenerar
@@ -188,7 +188,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
       {/* Skills Section */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="h-5 w-5 text-purple-600" />
+          <BookOpen className="h-5 w-5 text-[#5D3A9B]" />
           <h4 className="text-xl font-bold text-gray-900">Habilidades recomendadas</h4>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
@@ -214,11 +214,11 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
                     href={resource.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 bg-gray-50 hover:bg-purple-50 rounded border border-gray-200 hover:border-purple-300 transition-colors group"
+                    className="flex items-center gap-2 p-2 bg-gray-50 hover:bg-[#F3F0F9] rounded border border-gray-200 hover:border-[#5D3A9B] transition-colors group"
                   >
-                    <span className="text-purple-600">{getTypeIcon(resource.type)}</span>
+                    <span className="text-[#5D3A9B]">{getTypeIcon(resource.type)}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700 truncate">
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#5D3A9B] truncate">
                         {resource.title}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -230,7 +230,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
                         </span>
                       </div>
                     </div>
-                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-purple-600" />
+                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-[#5D3A9B]" />
                   </a>
                 ))}
               </div>
@@ -242,7 +242,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
       {/* Projects Section */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <Code2 className="h-5 w-5 text-purple-600" />
+          <Code2 className="h-5 w-5 text-[#5D3A9B]" />
           <h4 className="text-xl font-bold text-gray-900">Proyectos sugeridos</h4>
         </div>
         <div className="grid gap-4">
@@ -268,7 +268,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
                   {project.technologies.map((tech, tIndex) => (
                     <span
                       key={tIndex}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                      className="px-3 py-1 bg-[#E2D6F3] text-[#5D3A9B] rounded-full text-sm font-medium"
                     >
                       {tech}
                     </span>
@@ -285,7 +285,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
                 <ul className="space-y-1">
                   {project.learningOutcomes.map((outcome, oIndex) => (
                     <li key={oIndex} className="text-sm text-gray-600 flex items-start gap-2">
-                      <span className="text-purple-500 mt-0.5">•</span>
+                      <span className="text-[#5D3A9B] mt-0.5">•</span>
                       <span>{outcome}</span>
                     </li>
                   ))}
