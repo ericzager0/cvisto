@@ -24,6 +24,9 @@ export default function PostulacionesClient({
   const [applications, setApplications] = useState(initialApplications);
   const [searchQuery, setSearchQuery] = useState("");
   const [shouldSearch, setShouldSearch] = useState(false);
+  const [activeTab, setActiveTab] = useState("search");
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
 
   const handleRefreshSimple = () => {
     window.location.reload();
@@ -42,8 +45,28 @@ export default function PostulacionesClient({
     }
   };
 
+  const handleCopyToScanner = (jobText: string) => {
+    // Cambiar a la pestaña de job-scanner y pasar el texto
+    const encodedText = encodeURIComponent(jobText);
+    window.open(`/job-scanner?jobText=${encodedText}`, '_blank');
+  };
+
+  const handleAddToApplications = async (job: any) => {
+    // Cambiar a la pestaña de aplicaciones y abrir el diálogo con los datos
+    setSelectedJob({
+      position: job.title,
+      company: job.company,
+      location: job.location,
+      url: job.url,
+      description: job.description,
+      salary: job.salary,
+    });
+    setActiveTab("applications");
+    setAddDialogOpen(true);
+  };
+
   return (
-    <Tabs defaultValue="search" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full max-w-md grid-cols-2 bg-purple-100">
         <TabsTrigger 
           value="applications" 
@@ -69,7 +92,16 @@ export default function PostulacionesClient({
               Seguimiento de tus postulaciones
             </p>
           </div>
-          <AddApplicationDialog userId={userId} onSuccess={handleRefreshSimple} />
+          <AddApplicationDialog 
+            userId={userId} 
+            onSuccess={handleRefreshSimple}
+            initialData={selectedJob}
+            open={addDialogOpen}
+            onOpenChange={(open) => {
+              setAddDialogOpen(open);
+              if (!open) setSelectedJob(null);
+            }}
+          />
         </div>
 
         <ApplicationsList
@@ -99,6 +131,8 @@ export default function PostulacionesClient({
             initialQuery={searchQuery}
             triggerSearch={shouldSearch}
             onSearchComplete={() => setShouldSearch(false)}
+            onCopyToScanner={handleCopyToScanner}
+            onAddToApplications={handleAddToApplications}
           />
         </div>
       </TabsContent>

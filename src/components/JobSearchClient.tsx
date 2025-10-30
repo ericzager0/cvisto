@@ -19,6 +19,9 @@ import {
   ExternalLink,
   Briefcase,
   Clock,
+  Plus,
+  DollarSign,
+  ScanSearch,
 } from "lucide-react";
 
 interface Job {
@@ -47,12 +50,16 @@ interface JobSearchClientProps {
   initialQuery?: string;
   triggerSearch?: boolean;
   onSearchComplete?: () => void;
+  onCopyToScanner?: (jobText: string) => void;
+  onAddToApplications?: (job: Job) => void;
 }
 
 export default function JobSearchClient({
   initialQuery = "",
   triggerSearch = false,
   onSearchComplete,
+  onCopyToScanner,
+  onAddToApplications,
 }: JobSearchClientProps) {
   const [query, setQuery] = useState(initialQuery);
   const [location, setLocation] = useState("Argentina");
@@ -86,6 +93,8 @@ export default function JobSearchClient({
       const data: JobSearchResponse = await response.json();
 
       if (response.ok) {
+        console.log("Jobs received:", data.jobs.length);
+        console.log("Sample job data:", data.jobs[0]);
         setJobs(data.jobs);
         setTotal(data.total);
         setSearched(true);
@@ -104,6 +113,39 @@ export default function JobSearchClient({
     searchJobs();
   };
 
+  const handleCopyToScanner = async (job: Job) => {
+    try {
+      // Intentar obtener el contenido completo de la página
+      const response = await fetch(`/api/fetch-job-content?url=${encodeURIComponent(job.url)}`);
+      let fullContent = '';
+      
+      if (response.ok) {
+        const data = await response.json();
+        fullContent = data.content || '';
+      }
+      
+      // Si no se pudo obtener el contenido completo, usar la info que tenemos
+      if (!fullContent) {
+        fullContent = `${job.title}\n\nEmpresa: ${job.company}\nUbicación: ${job.location}\n${job.salary ? `Salario: ${job.salary}\n` : ''}${job.jobType ? `Tipo: ${job.jobType}\n` : ''}\n\n${stripHtml(job.description)}\n\nURL: ${job.url}`;
+      }
+      
+      // Abrir job-scanner en nueva pestaña con el contenido
+      const encodedText = encodeURIComponent(fullContent);
+      window.open(`/job-scanner?jobText=${encodedText}`, '_blank');
+    } catch (error) {
+      console.error('Error fetching job content:', error);
+      // Fallback: usar la info básica que tenemos
+      const jobText = `${job.title}\n\nEmpresa: ${job.company}\nUbicación: ${job.location}\n${job.salary ? `Salario: ${job.salary}\n` : ''}${job.jobType ? `Tipo: ${job.jobType}\n` : ''}\n\n${stripHtml(job.description)}\n\nURL: ${job.url}`;
+      const encodedText = encodeURIComponent(jobText);
+      window.open(`/job-scanner?jobText=${encodedText}`, '_blank');
+    }
+  };
+
+  const handleAddToApplications = (job: Job) => {
+    if (onAddToApplications) {
+      onAddToApplications(job);
+    }
+  };
 
 
   const formatDate = (dateString: string) => {
@@ -235,24 +277,46 @@ export default function JobSearchClient({
                     </div>
                   </div>
                 </div>
-                <a
-                  href={job.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0"
-                >
-                  <Button variant="outline" size="sm">
-                    Ver oferta
-                    <ExternalLink className="ml-2 h-4 w-4" />
+                <div className="shrink-0 flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCopyToScanner(job)}
+                    title="Escanear oferta con IA"
+                    className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                  >
+                    <ScanSearch className="h-4 w-4 mr-2" />
+                    Escanear aviso
                   </Button>
-                </a>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleAddToApplications(job)}
+                    className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                    title="Agregar a postulaciones"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar a postulaciones
+                  </Button>
+                  <a
+                    href={job.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="outline" size="sm">
+                      Ver oferta
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
+                </div>
               </div>
 
               {/* Metadata */}
               <div className="flex flex-wrap gap-4 mb-3 text-sm">
                 {job.salary && (
-                  <div className="flex items-center gap-1 text-green-700 font-medium">
-                    💰 {job.salary}
+                  <div className="flex items-center gap-1 text-green-700 font-semibold">
+                    <DollarSign className="h-4 w-4" />
+                    {job.salary}
                   </div>
                 )}
                 {job.jobType && (

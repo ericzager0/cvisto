@@ -25,6 +25,16 @@ import { createJobApplicationAction } from "@/app/actions";
 interface AddApplicationDialogProps {
   userId: string;
   onSuccess?: () => void;
+  initialData?: {
+    position?: string;
+    company?: string;
+    location?: string;
+    url?: string;
+    description?: string;
+    salary?: string;
+  };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const statusOptions = [
@@ -37,9 +47,19 @@ const statusOptions = [
   { value: "withdrawn", label: "Retirado" },
 ];
 
-export default function AddApplicationDialog({ userId, onSuccess }: AddApplicationDialogProps) {
-  const [open, setOpen] = useState(false);
+export default function AddApplicationDialog({ 
+  userId, 
+  onSuccess,
+  initialData,
+  open: controlledOpen,
+  onOpenChange,
+}: AddApplicationDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (onOpenChange || (() => {})) : setInternalOpen;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,6 +111,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
                 id="jobTitle"
                 name="jobTitle"
                 placeholder="Ej: Desarrollador Full Stack"
+                defaultValue={initialData?.position || ""}
                 required
               />
             </div>
@@ -100,6 +121,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
                 id="company"
                 name="company"
                 placeholder="Ej: Tech Company SA"
+                defaultValue={initialData?.company || ""}
                 required
               />
             </div>
@@ -112,6 +134,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
                 id="location"
                 name="location"
                 placeholder="Ej: Buenos Aires, Argentina"
+                defaultValue={initialData?.location || ""}
               />
             </div>
             <div className="space-y-2">
@@ -120,6 +143,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
                 id="salary"
                 name="salary"
                 placeholder="Ej: $500,000 - $800,000"
+                defaultValue={initialData?.salary || ""}
               />
             </div>
           </div>
@@ -129,6 +153,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
             <Input
               id="jobUrl"
               name="jobUrl"
+              defaultValue={initialData?.url || ""}
               type="url"
               placeholder="https://..."
             />
@@ -168,6 +193,7 @@ export default function AddApplicationDialog({ userId, onSuccess }: AddApplicati
               id="notes"
               name="notes"
               placeholder="Notas sobre la aplicación, contactos, etc."
+              defaultValue={initialData?.description || ""}
               rows={3}
             />
           </div>

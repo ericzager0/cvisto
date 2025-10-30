@@ -32,10 +32,11 @@ interface AnalysisResult {
 
 interface JobScannerClientProps {
   profile: Profile;
+  initialJobText?: string;
 }
 
-export default function JobScannerClient({ profile }: JobScannerClientProps) {
-  const [jobText, setJobText] = useState("");
+export default function JobScannerClient({ profile, initialJobText }: JobScannerClientProps) {
+  const [jobText, setJobText] = useState(initialJobText || "");
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -2,9 +2,15 @@ import { auth } from "@/auth";
 import { getUserProfileById } from "@/lib/queries";
 import JobScannerClient from "@/components/JobScannerClient";
 
-export default async function JobScannerPage() {
+interface JobScannerPageProps {
+  searchParams: Promise<{ jobText?: string }>;
+}
+
+export default async function JobScannerPage({ searchParams }: JobScannerPageProps) {
   const session = await auth();
   const profile = await getUserProfileById(session?.user?.id!);
+  const params = await searchParams;
+  const initialJobText = params.jobText ? decodeURIComponent(params.jobText) : undefined;
 
   return (
     <div className="mx-auto flex flex-col gap-6 my-[40px] max-w-[1200px] px-4">
@@ -16,7 +22,7 @@ export default async function JobScannerPage() {
         </p>
       </div>
 
-      <JobScannerClient profile={profile} />
+      <JobScannerClient profile={profile} initialJobText={initialJobText} />
     </div>
   );
 }

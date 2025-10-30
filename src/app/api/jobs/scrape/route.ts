@@ -65,7 +65,10 @@ async function scrapeLinkedInJobs(
 
       // Extraer ID del trabajo de la URL
       const jobIdMatch = url.match(/jobs\/view\/(\d+)/);
-      const id = jobIdMatch ? jobIdMatch[1] : `job-${index}`;
+      const id = jobIdMatch ? jobIdMatch[1] : `linkedin-${index}`;
+
+      // Intentar extraer salario de LinkedIn
+      const salary = jobCard.find(".job-search-card__salary-info, .result-benefits__text").text().trim() || undefined;
 
       if (title && company && url) {
         jobs.push({
@@ -76,11 +79,13 @@ async function scrapeLinkedInJobs(
           description: "", // LinkedIn no muestra descripción en listados
           url,
           postedDate: postedDate || new Date().toISOString(),
+          salary,
           jobType: "No especificado",
         });
       }
     });
 
+    console.log(`LinkedIn scraping: Found ${jobs.length} jobs`);
     return jobs;
   } catch (error) {
     console.error("Error scraping LinkedIn:", error);
@@ -116,36 +121,61 @@ async function scrapeBumeranJobs(
     const jobs: ScrapedJob[] = [];
 
     // Buscar las tarjetas de trabajo en Bumeran
-    $("article[data-aviso-id]").each((index, element) => {
+    $("article[data-aviso-id], article.list-card").each((index, element) => {
       const $element = $(element);
 
-      const id = $element.attr("data-aviso-id") || `job-${index}`;
-      const title = $element.find("h2").text().trim();
-      const company = $element.find(".company-name").text().trim();
-      const location = $element.find(".job-location").text().trim();
-      const description = $element.find(".job-description").text().trim();
-      const relativeUrl = $element.find("a").attr("href") || "";
+      const id = $element.attr("data-aviso-id") || `bumeran-${index}`;
+      
+      // Título - probar varios selectores
+      const title = $element.find("h2 a, h3 a, .aviso-title").first().text().trim();
+      
+      // Empresa
+      const company = $element.find(".company-name, .aviso-empresa, h4").first().text().trim() ||
+                     "Empresa confidencial";
+      
+      // Ubicación
+      const location = $element.find(".job-location, .aviso-location, .location").first().text().trim() ||
+                      "Buenos Aires, Argentina";
+      
+      // Descripción
+      const description = $element.find(".job-description, .aviso-description, p").first().text().trim() || "";
+      
+      // URL
+      const relativeUrl = $element.find("h2 a, h3 a, a.aviso-link").first().attr("href") || "";
       const url = relativeUrl.startsWith("http")
         ? relativeUrl
         : `https://www.bumeran.com.ar${relativeUrl}`;
-      const postedDate = $element.find(".posted-date").text().trim();
-      const salary = $element.find(".salary").text().trim();
+      
+      // Fecha
+      const postedDate = $element.find(".posted-date, time, .aviso-date").first().text().trim() ||
+                        new Date().toISOString();
+      
+      // Salario
+      const salary = $element.find(".salary, .aviso-salary, .tag-salary").first().text().trim() || undefined;
 
       if (title && url) {
-        jobs.push({
+        const job = {
           id,
           title,
-          company: company || "Empresa confidencial",
-          location: location || "Buenos Aires, Argentina",
-          description: description || "",
+          company,
+          location,
+          description,
           url,
-          postedDate: postedDate || new Date().toISOString(),
-          salary: salary || undefined,
+          postedDate,
+          salary,
           jobType: "No especificado",
-        });
+        };
+        
+        // Debug: Log si se encontró salario
+        if (salary) {
+          console.log(`Bumeran - Found salary for "${title}": ${salary}`);
+        }
+        
+        jobs.push(job);
       }
     });
 
+    console.log(`Bumeran scraping: Found ${jobs.length} jobs`);
     return jobs;
   } catch (error) {
     console.error("Error scraping Bumeran:", error);
@@ -184,30 +214,62 @@ async function scrapeComputrabajoJobs(
     $("article[data-id]").each((index, element) => {
       const $element = $(element);
 
-      const id = $element.attr("data-id") || `job-${index}`;
-      const title = $element.find("h2 a").text().trim();
-      const company = $element.find(".fs16").first().text().trim();
-      const location = $element.find(".fs13").first().text().trim();
-      const description = $element.find("p").text().trim();
+      const id = $element.attr("data-id") || `computrabajo-${index}`;
+      
+      // Título del puesto
+      const title = $element.find("h2.fs18 a, h2 a").first().text().trim();
+      
+      // Empresa - puede estar en diferentes selectores
+      const company = $element.find(".fc_base").first().text().trim() || 
+                     $element.find("p.fs16").first().text().trim() ||
+                     "Empresa confidencial";
+      
+      // Ubicación
+      const location = $element.find(".fs13.fc_aux").first().text().trim() || 
+                      $element.find(".dib.mr8").text().trim() ||
+                      "Buenos Aires, Argentina";
+      
+      // Salario (si existe)
+      const salary = $element.find(".tag.base, .tag-salary, span[data-salary]").text().trim() || undefined;
+      
+      // Descripción
+      const description = $element.find("p.mb10, p.fs16").last().text().trim() || "";
+      
+      // URL
       const relativeUrl = $element.find("h2 a").attr("href") || "";
       const url = relativeUrl.startsWith("http")
         ? relativeUrl
         : `https://www.computrabajo.com.ar${relativeUrl}`;
-      const postedDate = $element.find("time").text().trim();
+      
+      // Fecha de publicación
+      const postedDate = $element.find("time").attr("datetime") || 
+                        $element.find(".fs13").last().text().trim() ||
+                        new Date().toISOString();
 
       if (title && url) {
-        jobs.push({
+        const job = {
           id,
           title,
-          company: company || "Empresa confidencial",
-          location: location || "Buenos Aires, Argentina",
-          description: description || "",
+          company,
+          location,
+          description,
           url,
-          postedDate: postedDate || new Date().toISOString(),
+          postedDate,
+          salary,
           jobType: "No especificado",
-        });
+        };
+        
+        // Debug: Log si se encontró salario
+        if (salary) {
+          console.log(`Computrabajo - Found salary for "${title}": ${salary}`);
+        }
+        
+        jobs.push(job);
       }
     });
+
+    console.log(`Computrabajo scraping: Found ${jobs.length} jobs`);
+    return jobs;
 
     return jobs;
   } catch (error) {
