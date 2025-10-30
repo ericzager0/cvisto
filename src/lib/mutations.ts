@@ -432,3 +432,11 @@ export async function updateRecommendedPositions(userId: string, positions: stri
     WHERE id = ${userId}
   `;
 }
+
+export async function updateProfileEnhancement(userId: string, data: any) {
+  await sql`
+    UPDATE users
+    SET profile_enhancement = ${sql.json(data)}
+    WHERE id = ${userId}
+  `;
+}

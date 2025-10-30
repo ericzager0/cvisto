@@ -33,7 +33,7 @@ export default async function Navbar() {
             <NavLink href="/job-scanner" icon={ScanSearch}>Scanner</NavLink>
             <NavLink href="/cvs" icon={FileText}>CVs</NavLink>
             <NavLink href="/postulaciones" icon={Briefcase}>Postulaciones</NavLink>
-            <NavLink href="/potenciar-perfil" icon={Sparkles}>Potenciar Perfil</NavLink>
+            <NavLink href="/enhance-profile" icon={Sparkles}>Potenciar Perfil</NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger
                 id="navbar-dropdown-menu-trigger"

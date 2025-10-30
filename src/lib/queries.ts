@@ -24,6 +24,7 @@ export interface Profile {
   phoneNumber: string;
   location: string;
   recommendedPositions: string[] | null;
+  profileEnhancement: any | null;
   links: { id: number; link: string }[];
   educations: {
     id: number;
@@ -62,7 +63,6 @@ export async function getUserProfileById(id: string): Promise<Profile> {
     u.bio,
     u.phone_number AS "phoneNumber",
     u.location,
-    u.recommended_positions AS "recommendedPositions",
     COALESCE(
       (
         SELECT jsonb_agg(jsonb_build_object('id', l.id, 'link', l.link))
@@ -118,7 +118,9 @@ export async function getUserProfileById(id: string): Promise<Profile> {
         FROM projects p
         WHERE p.user_id = u.id
       ), '[]'
-    ) AS projects
+    ) AS projects,
+    u.recommended_positions AS "recommendedPositions",
+    u.profile_enhancement AS "profileEnhancement"
   FROM users u
   WHERE u.id = ${id};
     `;
