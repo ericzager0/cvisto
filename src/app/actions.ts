@@ -727,3 +727,20 @@ export async function updateRecommendedPositionsAction(
   revalidatePath("/postulaciones");
   return { success: true };
 }
+
+export async function updateProfileEnhancementAction(
+  userId: string,
+  data: any
+) {
+  const session = await auth();
+  
+  if (session?.user?.id !== userId) {
+    throw new Error("No autorizado");
+  }
+
+  const { updateProfileEnhancement } = await import("@/lib/mutations");
+  await updateProfileEnhancement(userId, data);
+  
+  revalidatePath("/enhance-profile");
+  return { success: true };
+}

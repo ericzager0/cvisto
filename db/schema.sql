@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS public.users
     phone_number text COLLATE pg_catalog."default",
     location text COLLATE pg_catalog."default",
     recommended_positions jsonb,
+    profile_enhancement jsonb,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_email_key UNIQUE (email)
 );

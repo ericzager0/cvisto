@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Sparkles, RefreshCw } from "lucide-react";
@@ -36,6 +36,11 @@ export default function RecommendedPositions({
   const [positions, setPositions] = useState<string[] | null>(normalizedPositions);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Actualizar positions cuando initialPositions cambie
+  useEffect(() => {
+    setPositions(normalizedPositions);
+  }, [initialPositions]);
 
   const generatePositions = async () => {
     setLoading(true);
