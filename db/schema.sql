@@ -10,6 +10,16 @@ CREATE TYPE proficiency AS ENUM (
   'native'
 );
 
+CREATE TYPE application_status AS ENUM (
+  'applied',
+  'phone_screen',
+  'interview',
+  'technical_test',
+  'offer',
+  'rejected',
+  'withdrawn'
+);
+
 CREATE TABLE IF NOT EXISTS public.cvs
 (
     id uuid NOT NULL,
@@ -83,6 +93,7 @@ CREATE TABLE IF NOT EXISTS public.users
     bio text COLLATE pg_catalog."default",
     phone_number text COLLATE pg_catalog."default",
     location text COLLATE pg_catalog."default",
+    recommended_positions jsonb,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_email_key UNIQUE (email)
 );
@@ -96,6 +107,25 @@ CREATE TABLE IF NOT EXISTS public.projects
     start_date date,
     end_date date,
     PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.job_applications
+(
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL,
+    job_title text COLLATE pg_catalog."default" NOT NULL,
+    company text COLLATE pg_catalog."default" NOT NULL,
+    location text COLLATE pg_catalog."default",
+    job_url text COLLATE pg_catalog."default",
+    status application_status NOT NULL DEFAULT 'applied',
+    applied_date date NOT NULL DEFAULT CURRENT_DATE,
+    salary text COLLATE pg_catalog."default",
+    notes text COLLATE pg_catalog."default",
+    next_step text COLLATE pg_catalog."default",
+    next_step_date date,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT job_applications_pkey PRIMARY KEY (id)
 );
 
 ALTER TABLE IF EXISTS public.cvs
@@ -152,5 +182,18 @@ ALTER TABLE IF EXISTS public.projects
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
+
+ALTER TABLE IF EXISTS public.job_applications
+    ADD CONSTRAINT job_applications_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE;
+
+-- Índices para job_applications
+CREATE INDEX IF NOT EXISTS idx_job_applications_user_id 
+ON public.job_applications (user_id);
+
+CREATE INDEX IF NOT EXISTS idx_job_applications_applied_date 
+ON public.job_applications (applied_date DESC);
 
 END;

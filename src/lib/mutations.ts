@@ -322,3 +322,113 @@ export async function deleteProject(id: number) {
   WHERE id = ${id}
   `;
 }
+
+// Job Applications
+export async function createJobApplication(data: {
+  userId: string;
+  jobTitle: string;
+  company: string;
+  location?: string;
+  jobUrl?: string;
+  status?: string;
+  appliedDate?: string;
+  salary?: string;
+  notes?: string;
+  nextStep?: string;
+  nextStepDate?: string;
+}) {
+  const result = await sql`
+    INSERT INTO job_applications (
+      user_id,
+      job_title,
+      company,
+      location,
+      job_url,
+      status,
+      applied_date,
+      salary,
+      notes,
+      next_step,
+      next_step_date
+    )
+    VALUES (
+      ${data.userId},
+      ${data.jobTitle},
+      ${data.company},
+      ${data.location || null},
+      ${data.jobUrl || null},
+      ${data.status || 'applied'},
+      ${data.appliedDate || new Date().toISOString().split('T')[0]},
+      ${data.salary || null},
+      ${data.notes || null},
+      ${data.nextStep || null},
+      ${data.nextStepDate || null}
+    )
+    RETURNING id
+  `;
+
+  return result[0]?.id;
+}
+
+export async function updateJobApplication(
+  id: string,
+  data: {
+    status?: string;
+    salary?: string;
+    notes?: string;
+    nextStep?: string;
+    nextStepDate?: string;
+  }
+) {
+  const updates: string[] = [];
+  const values: any[] = [];
+
+  if (data.status !== undefined) {
+    updates.push(`status = $${values.length + 1}`);
+    values.push(data.status);
+  }
+  if (data.salary !== undefined) {
+    updates.push(`salary = $${values.length + 1}`);
+    values.push(data.salary);
+  }
+  if (data.notes !== undefined) {
+    updates.push(`notes = $${values.length + 1}`);
+    values.push(data.notes);
+  }
+  if (data.nextStep !== undefined) {
+    updates.push(`next_step = $${values.length + 1}`);
+    values.push(data.nextStep);
+  }
+  if (data.nextStepDate !== undefined) {
+    updates.push(`next_step_date = $${values.length + 1}`);
+    values.push(data.nextStepDate);
+  }
+
+  if (updates.length === 0) return;
+
+  updates.push('updated_at = CURRENT_TIMESTAMP');
+  values.push(id);
+
+  const query = `
+    UPDATE job_applications
+    SET ${updates.join(', ')}
+    WHERE id = $${values.length}
+  `;
+
+  await sql.unsafe(query, values);
+}
+
+export async function deleteJobApplication(id: string) {
+  await sql`
+    DELETE FROM job_applications
+    WHERE id = ${id}
+  `;
+}
+
+export async function updateRecommendedPositions(userId: string, positions: string[]) {
+  await sql`
+    UPDATE users
+    SET recommended_positions = ${sql.json(positions)}
+    WHERE id = ${userId}
+  `;
+}

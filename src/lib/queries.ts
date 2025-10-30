@@ -23,6 +23,7 @@ export interface Profile {
   bio: string;
   phoneNumber: string;
   location: string;
+  recommendedPositions: string[] | null;
   links: { id: number; link: string }[];
   educations: {
     id: number;
@@ -61,6 +62,7 @@ export async function getUserProfileById(id: string): Promise<Profile> {
     u.bio,
     u.phone_number AS "phoneNumber",
     u.location,
+    u.recommended_positions AS "recommendedPositions",
     COALESCE(
       (
         SELECT jsonb_agg(jsonb_build_object('id', l.id, 'link', l.link))
@@ -255,4 +257,71 @@ export async function getCVById(cvId: string) {
   `;
 
   return result[0];
+}
+
+// Job Applications
+export interface JobApplication {
+  id: string;
+  userId: string;
+  jobTitle: string;
+  company: string;
+  location: string | null;
+  jobUrl: string | null;
+  status: 'applied' | 'phone_screen' | 'interview' | 'technical_test' | 'offer' | 'rejected' | 'withdrawn';
+  appliedDate: string;
+  salary: string | null;
+  notes: string | null;
+  nextStep: string | null;
+  nextStepDate: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getJobApplicationsByUserId(userId: string): Promise<JobApplication[]> {
+  const result = await sql<JobApplication[]>`
+    SELECT 
+      id,
+      user_id as "userId",
+      job_title as "jobTitle",
+      company,
+      location,
+      job_url as "jobUrl",
+      status,
+      applied_date as "appliedDate",
+      salary,
+      notes,
+      next_step as "nextStep",
+      next_step_date as "nextStepDate",
+      created_at as "createdAt",
+      updated_at as "updatedAt"
+    FROM job_applications
+    WHERE user_id = ${userId}
+    ORDER BY applied_date DESC, created_at DESC
+  `;
+
+  return result;
+}
+
+export async function getJobApplicationById(id: string): Promise<JobApplication | null> {
+  const result = await sql<JobApplication[]>`
+    SELECT 
+      id,
+      user_id as "userId",
+      job_title as "jobTitle",
+      company,
+      location,
+      job_url as "jobUrl",
+      status,
+      applied_date as "appliedDate",
+      salary,
+      notes,
+      next_step as "nextStep",
+      next_step_date as "nextStepDate",
+      created_at as "createdAt",
+      updated_at as "updatedAt"
+    FROM job_applications
+    WHERE id = ${id}
+  `;
+
+  return result[0] || null;
 }
