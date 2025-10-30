@@ -639,3 +639,91 @@ export async function updateCVAction(cvId: string, updatedCvData: any) {
     return { success: false, error: "Error al actualizar el CV" };
   }
 }
+
+// Job Applications Actions
+export async function createJobApplicationAction(data: {
+  userId: string;
+  jobTitle: string;
+  company: string;
+  location?: string;
+  jobUrl?: string;
+  status?: string;
+  appliedDate?: string;
+  salary?: string;
+  notes?: string;
+  nextStep?: string;
+  nextStepDate?: string;
+}) {
+  const session = await auth();
+  
+  if (session?.user?.id !== data.userId) {
+    throw new Error("No autorizado");
+  }
+
+  const { createJobApplication } = await import("@/lib/mutations");
+  const id = await createJobApplication(data);
+  
+  revalidatePath("/postulaciones");
+  return { success: true, id };
+}
+
+export async function updateJobApplicationAction(
+  id: string,
+  data: {
+    status?: string;
+    salary?: string;
+    notes?: string;
+    nextStep?: string;
+    nextStepDate?: string;
+  }
+) {
+  const session = await auth();
+  const { getJobApplicationById } = await import("@/lib/queries");
+  
+  const application = await getJobApplicationById(id);
+  
+  if (!application || session?.user?.id !== application.userId) {
+    throw new Error("No autorizado");
+  }
+
+  const { updateJobApplication } = await import("@/lib/mutations");
+  await updateJobApplication(id, data);
+  
+  revalidatePath("/postulaciones");
+  return { success: true };
+}
+
+export async function deleteJobApplicationAction(id: string) {
+  const session = await auth();
+  const { getJobApplicationById } = await import("@/lib/queries");
+  
+  const application = await getJobApplicationById(id);
+  
+  if (!application || session?.user?.id !== application.userId) {
+    throw new Error("No autorizado");
+  }
+
+  const { deleteJobApplication } = await import("@/lib/mutations");
+  await deleteJobApplication(id);
+  
+  revalidatePath("/postulaciones");
+  return { success: true };
+}
+
+// Recommended Positions Actions
+export async function updateRecommendedPositionsAction(
+  userId: string,
+  positions: string[]
+) {
+  const session = await auth();
+  
+  if (session?.user?.id !== userId) {
+    throw new Error("No autorizado");
+  }
+
+  const { updateRecommendedPositions } = await import("@/lib/mutations");
+  await updateRecommendedPositions(userId, positions);
+  
+  revalidatePath("/postulaciones");
+  return { success: true };
+}
