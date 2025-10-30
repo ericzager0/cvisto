@@ -11,7 +11,13 @@ import {
   Code2, 
   TrendingUp,
   Clock,
-  Target
+  Target,
+  Youtube,
+  FileText,
+  Lightbulb,
+  Newspaper,
+  Link as LinkIcon,
+  GraduationCap
 } from "lucide-react";
 
 interface Resource {
@@ -104,19 +110,20 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
   };
 
   const getTypeIcon = (type: string) => {
+    const iconClass = "w-5 h-5";
     switch (type.toLowerCase()) {
       case "youtube":
-        return "🎥";
+        return <Youtube className={iconClass} />;
       case "curso":
-        return "📚";
+        return <GraduationCap className={iconClass} />;
       case "documentación":
-        return "📄";
+        return <FileText className={iconClass} />;
       case "tutorial":
-        return "💡";
+        return <Lightbulb className={iconClass} />;
       case "artículo":
-        return "📰";
+        return <Newspaper className={iconClass} />;
       default:
-        return "🔗";
+        return <LinkIcon className={iconClass} />;
     }
   };
 
@@ -209,7 +216,7 @@ export default function ProfileEnhancement({ profile, userId }: ProfileEnhanceme
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 p-2 bg-gray-50 hover:bg-purple-50 rounded border border-gray-200 hover:border-purple-300 transition-colors group"
                   >
-                    <span className="text-lg">{getTypeIcon(resource.type)}</span>
+                    <span className="text-purple-600">{getTypeIcon(resource.type)}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 group-hover:text-purple-700 truncate">
                         {resource.title}

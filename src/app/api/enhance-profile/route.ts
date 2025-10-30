@@ -135,8 +135,8 @@ Estructura requerida:
       "difficulty": "Principiante" | "Intermedio" | "Avanzado",
       "resources": [
         {
-          "title": "Título del recurso",
-          "url": "URL del recurso (curso gratis, tutorial, documentación)",
+          "title": "Título descriptivo del recurso",
+          "url": "URL del recurso - Para YouTube usa URLs de búsqueda: https://www.youtube.com/results?search_query=termino+busqueda",
           "type": "YouTube" | "Curso" | "Documentación" | "Tutorial" | "Artículo",
           "duration": "Duración estimada (ej: 3 horas, 2 semanas)"
         }
@@ -159,6 +159,8 @@ Consideraciones importantes:
 - Sugiere 5-7 habilidades relevantes y emergentes en su rubro
 - Las habilidades deben ser progresivas: algunas para complementar lo que ya sabe, otras más avanzadas
 - TODOS los recursos deben ser GRATIS (YouTube, freeCodeCamp, MDN, documentación oficial, etc.)
+- Para recursos de YouTube, usa URLs de búsqueda: https://www.youtube.com/results?search_query=termino+de+busqueda (reemplaza espacios con +)
+- Ejemplo YouTube: Para "React Hooks" usa "https://www.youtube.com/results?search_query=react+hooks+tutorial+español"
 - Prioriza recursos en español cuando sea posible, pero inglés está bien para contenido técnico
 - Sugiere 3-5 proyectos prácticos que pueda hacer
 - Los proyectos deben incluir tecnologías nuevas para el usuario pero relacionadas con su experiencia
