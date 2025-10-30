@@ -106,7 +106,7 @@ export function generateCVDocument(
       spacing: { after: 100 },
       children: [
         new TextRun({
-          text: data.header.address || "[Physical Address]",
+          text: data.header.address || "[Dirección Física]",
         }),
       ],
     })
@@ -151,13 +151,13 @@ export function generateCVDocument(
             bold: true,
           }),
           new TextRun({
-            text: `\t${edu.city_state_country || "[City], [State/Country]"}`,
+            text: `\t${edu.city_state_country || "[Ciudad], [Estado/País]"}`,
           }),
         ],
         tabStops: [
           {
             type: TabStopType.RIGHT,
-            position: TabStopPosition.MAX,
+            position: 14000,
           },
         ],
       })
@@ -246,20 +246,20 @@ export function generateCVDocument(
         children: [
           new TextRun({
             text: edu.major
-              ? `${edu.degree} in ${edu.major}`
+              ? `${edu.degree} en ${edu.major}`
               : edu.degree || "[COMPLETAR MANUALMENTE]",
             italics: true,
           }),
           new TextRun({
             text: `\t${graduationPrefix}${
-              edu.expected_graduation || "[Graduation Date]"
+              edu.expected_graduation || "[Fecha de Graduación]"
             }`,
           }),
         ],
         tabStops: [
           {
             type: TabStopType.RIGHT,
-            position: TabStopPosition.MAX,
+            position: 14000,
           },
         ],
       })
@@ -280,7 +280,7 @@ export function generateCVDocument(
     if (edu.honors && edu.honors.length > 0) {
       sections.push(
         new Paragraph({
-          text: `• Honors: ${edu.honors.join(", ")}`,
+          text: `• Honores: ${edu.honors.join(", ")}`,
           spacing: { after: 50 },
           bullet: { level: 0 },
         })
@@ -291,7 +291,7 @@ export function generateCVDocument(
     if (edu.relevant_coursework && edu.relevant_coursework.length > 0) {
       sections.push(
         new Paragraph({
-          text: `• Relevant Coursework: ${edu.relevant_coursework.join(", ")}`,
+          text: `• Cursos Relevantes: ${edu.relevant_coursework.join(", ")}`,
           spacing: { after: 100 },
           bullet: { level: 0 },
         })
@@ -321,13 +321,13 @@ export function generateCVDocument(
               bold: true,
             }),
             new TextRun({
-              text: `\t${exp.city_state_country || "[City], [State/Country]"}`,
+              text: `\t${exp.city_state_country || "[Ciudad], [Estado/País]"}`,
             }),
           ],
           tabStops: [
             {
               type: TabStopType.RIGHT,
-              position: TabStopPosition.MAX,
+              position: 14000,
             },
           ],
         })
@@ -340,19 +340,19 @@ export function generateCVDocument(
           spacing: { after: 50 },
           children: [
             new TextRun({
-              text: `${exp.position_title || "[Position Title]"}${groupInfo}`,
+              text: `${exp.position_title || "[Título del Puesto]"}${groupInfo}`,
               italics: true,
             }),
             new TextRun({
-              text: `\t${exp.start_date || "[Start Date]"} – ${
-                exp.end_date || "[End Date]"
+              text: `\t${exp.start_date || "[Fecha de Inicio]"} – ${
+                exp.end_date || "[Fecha de Fin]"
               }`,
             }),
           ],
           tabStops: [
             {
               type: TabStopType.RIGHT,
-              position: TabStopPosition.MAX,
+              position: 14000,
             },
           ],
         })
