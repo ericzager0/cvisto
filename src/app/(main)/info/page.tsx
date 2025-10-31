@@ -449,7 +449,7 @@ export default function InfoPage() {
                 <div>
                   <p className="font-semibold">Recomendaciones con IA</p>
                   <p className="text-sm text-muted-foreground">
-                    Gemini analiza tu perfil y sugiere puestos ideales para
+                    Nuestra IA analiza tu perfil y sugiere puestos ideales para
                     aplicar
                   </p>
                 </div>
