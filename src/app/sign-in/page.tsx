@@ -8,9 +8,9 @@ export default function LoginPage() {
       <header className="flex justify-center mt-[40px]">
         <Link href={"/"}>
           <Image
-            src={"cvisto.svg"}
+            src="/cvisto.png"
             alt="CVisto's logo"
-            width={600}
+            width={540}
             height={150}
             style={{ width: "300px", height: "auto" }}
             priority

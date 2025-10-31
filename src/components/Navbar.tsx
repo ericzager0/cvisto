@@ -20,7 +20,7 @@ export default async function Navbar() {
       <nav className="h-[60px] flex justify-between items-center w-full bg-[#5D3A9B] px-4">
         <Link href={"/"}>
           <Image
-            src="/cvisto-nav.svg"
+            src="/cvisto-nav.png"
             alt="CVisto's logo"
             width={540}
             height={150}
@@ -30,10 +30,18 @@ export default async function Navbar() {
         </Link>
         {session ? (
           <div className="flex gap-[32px] items-center">
-            <NavLink href="/job-scanner" icon={ScanSearch}>Scanner</NavLink>
-            <NavLink href="/cvs" icon={FileText}>CVs</NavLink>
-            <NavLink href="/postulaciones" icon={Briefcase}>Postulaciones</NavLink>
-            <NavLink href="/enhance-profile" icon={Sparkles}>Potenciar Perfil</NavLink>
+            <NavLink href="/job-scanner" icon={ScanSearch}>
+              Scanner
+            </NavLink>
+            <NavLink href="/cvs" icon={FileText}>
+              CVs
+            </NavLink>
+            <NavLink href="/postulaciones" icon={Briefcase}>
+              Postulaciones
+            </NavLink>
+            <NavLink href="/enhance-profile" icon={Sparkles}>
+              Potenciar Perfil
+            </NavLink>
             <DropdownMenu>
               <DropdownMenuTrigger
                 id="navbar-dropdown-menu-trigger"
@@ -57,10 +65,7 @@ export default async function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link
-                    href={"/info"}
-                    className="w-full px-2 cursor-pointer"
-                  >
+                  <Link href={"/info"} className="w-full px-2 cursor-pointer">
                     Información
                   </Link>
                 </DropdownMenuItem>
