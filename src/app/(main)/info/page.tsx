@@ -262,16 +262,10 @@ export default function InfoPage() {
                 Descalificaciones automáticas sin revisión humana:
               </p>
               <div className="bg-red-50 p-3 rounded text-sm space-y-2 border border-red-200">
-                <p>❌ Menos años de experiencia que el mínimo requerido</p>
-                <p>
-                  ❌ Falta keyword obligatoria (ej: "Python" para Developer
-                  Python Sr)
-                </p>
-                <p>
-                  ❌ Formato incompatible (CV no pudo ser parseado
-                  correctamente)
-                </p>
-                <p>❌ Información de contacto faltante o mal ubicada</p>
+                <p className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-600" /> Menos años de experiencia que el mínimo requerido</p>
+                <p className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-600" /> Falta keyword obligatoria (ej: "Python" para Developer Python Sr)</p>
+                <p className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-600" /> Formato incompatible (CV no pudo ser parseado correctamente)</p>
+                <p className="flex items-center gap-2"><XCircle className="w-4 h-4 text-red-600" /> Información de contacto faltante o mal ubicada</p>
               </div>
             </div>
           </div>
@@ -291,7 +285,7 @@ export default function InfoPage() {
           <div className="bg-red-50 border-2 border-red-300 rounded-lg p-5">
             <div className="flex items-center gap-2 mb-4">
               <XCircle className="w-5 h-5 text-red-600" />
-              <h3 className="font-bold text-lg">❌ No ATS-Friendly</h3>
+              <h3 className="font-bold text-lg">No ATS-Friendly</h3>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
@@ -343,7 +337,7 @@ export default function InfoPage() {
           <div className="bg-green-50 border-2 border-green-300 rounded-lg p-5">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <h3 className="font-bold text-lg">✓ ATS-Friendly</h3>
+              <h3 className="font-bold text-lg">ATS-Friendly</h3>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
