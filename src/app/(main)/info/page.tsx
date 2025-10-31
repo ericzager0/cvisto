@@ -10,6 +10,7 @@ import {
   Bot,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function InfoPage() {
   return (
@@ -418,7 +419,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Gestión de Postulaciones</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Trackea tus aplicaciones con 7 estados diferentes y notas
                     personalizadas
                   </p>
@@ -430,7 +431,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Búsqueda Automatizada</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Web scraping de 3 portales argentinos principales
                     simultáneamente
                   </p>
@@ -442,7 +443,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Recomendaciones con IA</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Nuestra IA analiza tu perfil y sugiere puestos ideales para
                     aplicar
                   </p>
@@ -456,7 +457,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Agregar Rápido</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Botón para pasar ofertas de búsqueda a postulaciones con un
                     click
                   </p>
@@ -468,7 +469,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Desarrollo Continuo</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Sugerencias de skills y proyectos para mejorar tu
                     empleabilidad
                   </p>
@@ -480,7 +481,7 @@ export default function InfoPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Todo Gratis</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm">
                     Recursos de aprendizaje 100% gratuitos: YouTube, docs,
                     cursos online
                   </p>
@@ -500,18 +501,18 @@ export default function InfoPage() {
           Dejá de perder oportunidades. Optimizá tu perfil hoy.
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
-          <a
+          <Link
             href="/profile"
             className="bg-white text-[#5D3A9B] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Rellenar Perfil
-          </a>
-          <a
+          </Link>
+          <Link
             href="/postulaciones"
-            className="bg-[#4A2D7C] px-6 py-3 rounded-lg font-semibold hover:bg-[#3d2566] transition-colors border-2 border-white"
+            className="bg-[#4A2D7C] px-6 py-3 rounded-lg font-semibold hover:bg-[#3d2566] border-white transition-colors "
           >
             Buscar Ofertas
-          </a>
+          </Link>
         </div>
       </section>
     </div>
