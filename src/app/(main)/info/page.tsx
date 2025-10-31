@@ -7,7 +7,7 @@ export default function InfoPage() {
       {/* Hero Section */}
       <div className="flex flex-col gap-4 text-center items-center">
         <Image
-          src="/cvisto.svg"
+          src="/cvisto.png"
           alt="CVisto's logo"
           width={600}
           height={150}
