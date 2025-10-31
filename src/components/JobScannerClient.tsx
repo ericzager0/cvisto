@@ -35,7 +35,10 @@ interface JobScannerClientProps {
   initialJobText?: string;
 }
 
-export default function JobScannerClient({ profile, initialJobText }: JobScannerClientProps) {
+export default function JobScannerClient({
+  profile,
+  initialJobText,
+}: JobScannerClientProps) {
   const [jobText, setJobText] = useState(initialJobText || "");
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -60,23 +63,20 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
 
     setGeneratingCv(true);
     setError(null);
-    setCvDialogOpen(false); // Cerrar el diálogo
+    setCvDialogOpen(false);
+
     try {
       console.log("Llamando a la acción de servidor 'generateCvData'...");
       const cvData = await generateCvData(profile, analysis);
       console.log("Éxito. Datos del CV recibidos:", cvData);
 
-      // Generar el documento DOCX
       console.log("Generando documento DOCX...");
       const doc = generateCVDocument(cvData, options.includePhoto);
 
-      // Convertir a blob
       const blob = await Packer.toBlob(doc);
-      
-      // Convertir blob a ArrayBuffer para enviarlo al servidor
+
       const arrayBuffer = await blob.arrayBuffer();
-      
-      // Guardar en Cloudinary y en la BD
+
       console.log("Guardando CV en Cloudinary y base de datos...");
       const result = await generateAndSaveCv(
         profile,
@@ -86,12 +86,9 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
         arrayBuffer,
         cvData
       );
-      
-      console.log("CV guardado exitosamente:", result);
-      
-      // Redirigir a la página del CV
-      router.push(`/cvs/${result.cvId}`);
 
+      console.log("CV guardado exitosamente:", result);
+      router.push(`/cvs/${result.cvId}`);
     } catch (error) {
       console.error("Error al generar los datos del CV:", error);
       setError(
@@ -187,19 +184,14 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
 
       {analysis && (
         <>
-          <Separator />
-
           <div className="flex flex-col gap-6">
-            {/* Match Score & Generate CV Button */}
-            <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 p-4 bg-white rounded-lg shadow">
+            <div className="flex flex-col items-center justify-center gap-4 p-4 bg-white rounded-lg">
               <div
                 className={`flex flex-col items-center gap-2 p-6 rounded-xl ${getMatchBgColor(
                   analysis.matchScore
                 )}`}
               >
-                <span className="text-sm font-medium text-gray-600">
-                  Tu Match Score
-                </span>
+                <span className="text-sm font-medium">Tu Match Score</span>
                 <span
                   className={`text-5xl sm:text-6xl font-bold ${getMatchColor(
                     analysis.matchScore
@@ -228,52 +220,18 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
                 <Button
                   onClick={() => setCvDialogOpen(true)}
                   disabled={generatingCv || loading}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-green-600 hover:bg-green-700 text-white cursor-pointer"
                 >
-                  <FileText className="h-4 w-4 mr-2" />
+                  <FileText className="h-4 w-4" />
                   {generatingCv ? "Generando CV..." : "Generar CV optimizado"}
                 </Button>
-                <p className="text-xs text-gray-500 text-center max-w-[200px]">
+                <p className="text-sm text-[#777777] text-center">
                   Crea una versión de tu CV adaptada a esta oferta.
                 </p>
               </div>
             </div>
 
-            {/* Summary for Recruiter */}
-            <div className="p-4 bg-gray-50 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <h3 className="font-semibold text-blue-900">
-                  Resumen para el Recruiter
-                </h3>
-              </div>
-              <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Sparkles />
-                Palabras Clave del Aviso
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {analysis.keywords && analysis.keywords.length > 0 ? (
-                  analysis.keywords.map((kw, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-                    >
-                      {kw}
-                    </span>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No se encontraron palabras clave
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -285,8 +243,8 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
                   <ul className="space-y-2">
                     {analysis.must_haves.map((req, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
-                        <span className="text-green-600 mt-0.5">•</span>
-                        <span className="text-gray-700">{req}</span>
+                        <span className="text-green-600">•</span>
+                        <span>{req}</span>
                       </li>
                     ))}
                   </ul>
@@ -308,8 +266,8 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
                   <ul className="space-y-2">
                     {analysis.nice_to_haves.map((req, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
-                        <span className="text-blue-600 mt-0.5">•</span>
-                        <span className="text-gray-700">{req}</span>
+                        <span className="text-blue-600">•</span>
+                        <span>{req}</span>
                       </li>
                     ))}
                   </ul>
@@ -321,58 +279,92 @@ export default function JobScannerClient({ profile, initialJobText }: JobScanner
               </div>
             </div>
 
-            {analysis.gaps && analysis.gaps.length > 0 ? (
-              <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <TrendingDown className="h-5 w-5 text-red-600" />
-                  <h3 className="font-semibold text-red-900">
-                    Brechas Identificadas
-                  </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {analysis.gaps && analysis.gaps.length > 0 ? (
+                <div className="flex flex-col gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <TrendingDown className="h-5 w-5 text-red-600" />
+                    <h3 className="font-semibold text-red-900">
+                      Brechas Identificadas
+                    </h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {analysis.gaps.map((gap, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <span className="text-red-600">•</span>
+                        <span>{gap}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-2">
-                  {analysis.gaps.map((gap, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="text-red-600 mt-0.5">•</span>
-                      <span className="text-gray-700">{gap}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <h3 className="font-semibold text-green-900">
-                    Brechas Identificadas
-                  </h3>
+              ) : (
+                <div className="flex flex-col gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <h3 className="font-semibold text-green-900">
+                      Brechas Identificadas
+                    </h3>
+                  </div>
+                  <p className="text-sm text-green-700 font-medium">
+                    ¡Excelente! No se encontraron brechas significativas
+                  </p>
                 </div>
-                <p className="text-sm text-green-700 font-medium">
-                  ¡Excelente! No se encontraron brechas significativas
-                </p>
-              </div>
-            )}
+              )}
 
-            <div className="flex flex-col gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-yellow-600" />
-                <h3 className="font-semibold text-yellow-900">
-                  Sugerencias de Mejora
-                </h3>
+              <div className="flex flex-col gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-yellow-600" />
+                  <h3 className="font-semibold text-yellow-900">
+                    Sugerencias de Mejora
+                  </h3>
+                </div>
+                {analysis.suggestions && analysis.suggestions.length > 0 ? (
+                  <ul className="space-y-3">
+                    {analysis.suggestions.map((sug, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-medium uppercase flex-shrink-0 ">
+                          {sug.category}
+                        </span>
+                        <span className="text-sm">{sug.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    No se encontraron sugerencias de mejora
+                  </p>
+                )}
               </div>
-              {analysis.suggestions && analysis.suggestions.length > 0 ? (
-                <ul className="space-y-3">
-                  {analysis.suggestions.map((sug, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-medium uppercase flex-shrink-0 mt-0.5">
-                        {sug.category}
-                      </span>
-                      <span className="text-sm text-gray-700">{sug.text}</span>
-                    </li>
-                  ))}
-                </ul>
+            </div>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border">
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-blue-900">
+                Resumen para el Recruiter
+              </h3>
+            </div>
+            <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Sparkles />
+              Palabras Clave del Aviso
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {analysis.keywords && analysis.keywords.length > 0 ? (
+                analysis.keywords.map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                  >
+                    {kw}
+                  </span>
+                ))
               ) : (
                 <p className="text-sm text-gray-500">
-                  No se encontraron sugerencias de mejora
+                  No se encontraron palabras clave
                 </p>
               )}
             </div>

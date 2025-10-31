@@ -68,7 +68,7 @@ export default async function CVsPage({
           <div className="flex gap-3 mt-2">
             <Link
               href="/job-scanner"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-10 px-6 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 text-white"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all h-[36px] px-6 bg-[#5D3A9B] hover:bg-[#5D3A9B]/90 text-white"
             >
               Generar CV
             </Link>
