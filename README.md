@@ -29,6 +29,10 @@ En desarrollo activo.
 
 ![Sign-in page](screenshots/sign-in.png)
 
+### Dashboard page
+
+![Dashboard page](screenshots/dashboard.png)
+
 ### Profile page
 
 ![Profile page](screenshots/profile.png)
@@ -44,3 +48,11 @@ En desarrollo activo.
 ### Uploading CV
 
 ![Uploading CV](screenshots/uploading-cv.png)
+
+### Job scanner page
+
+![Job scanner page](screenshots/scanner.png)
+
+### Job scanned
+
+![Job scanned](screenshots/job-scanned.png)
