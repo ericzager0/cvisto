@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,15 @@ export default function JobScannerClient({
   const [generatingCv, setGeneratingCv] = useState(false);
   const [cvDialogOpen, setCvDialogOpen] = useState(false);
   const router = useRouter();
+
+  // Cargar texto desde sessionStorage al montar el componente
+  useEffect(() => {
+    const storedText = sessionStorage.getItem('jobScannerText');
+    if (storedText) {
+      setJobText(storedText);
+      sessionStorage.removeItem('jobScannerText');
+    }
+  }, []);
 
   const handleGenerateCv = async (options: {
     cvName: string;

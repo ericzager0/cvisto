@@ -18,10 +18,22 @@ import ExperienceDialog from "@/components/ExperienceDialog";
 import ExperienceCard from "@/components/ExperienceCard";
 import ProjectDialog from "@/components/ProjectDialog";
 import ProjectCard from "@/components/ProjectCard";
+import LinkedInImportButton from "@/components/LinkedInImportButton";
+import ClearProfileButton from "@/components/ClearProfileButton";
 
 export default async function ProfilePage() {
   const session = await auth();
   const profile = await getUserProfileById(session?.user?.id!);
+
+  // Determinar si el perfil tiene contenido
+  const hasContent = Boolean(
+    profile.bio ||
+    profile.phoneNumber ||
+    profile.location ||
+    profile.experiences?.length ||
+    profile.educations?.length ||
+    profile.skills?.length
+  );
 
   return (
     <div className="mx-auto flex flex-col gap-6 my-[40px] max-w-[900px] px-4">
@@ -44,6 +56,12 @@ export default async function ProfilePage() {
               }}
             />
           </div>
+        </div>
+
+        {/* Botones de importar y limpiar */}
+        <div className="flex gap-2">
+          <LinkedInImportButton userId={session?.user?.id!} hasContent={hasContent} />
+          {hasContent && <ClearProfileButton userId={session?.user?.id!} />}
         </div>
       </div>
 

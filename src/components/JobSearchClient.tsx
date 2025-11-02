@@ -129,15 +129,15 @@ export default function JobSearchClient({
         fullContent = `${job.title}\n\nEmpresa: ${job.company}\nUbicación: ${job.location}\n${job.salary ? `Salario: ${job.salary}\n` : ''}${job.jobType ? `Tipo: ${job.jobType}\n` : ''}\n\n${stripHtml(job.description)}\n\nURL: ${job.url}`;
       }
       
-      // Abrir job-scanner en nueva pestaña con el contenido
-      const encodedText = encodeURIComponent(fullContent);
-      window.open(`/job-scanner?jobText=${encodedText}`, '_blank');
+      // Guardar en sessionStorage en lugar de URL para evitar error 431
+      sessionStorage.setItem('jobScannerText', fullContent);
+      window.open('/job-scanner', '_blank');
     } catch (error) {
       console.error('Error fetching job content:', error);
       // Fallback: usar la info básica que tenemos
       const jobText = `${job.title}\n\nEmpresa: ${job.company}\nUbicación: ${job.location}\n${job.salary ? `Salario: ${job.salary}\n` : ''}${job.jobType ? `Tipo: ${job.jobType}\n` : ''}\n\n${stripHtml(job.description)}\n\nURL: ${job.url}`;
-      const encodedText = encodeURIComponent(jobText);
-      window.open(`/job-scanner?jobText=${encodedText}`, '_blank');
+      sessionStorage.setItem('jobScannerText', jobText);
+      window.open('/job-scanner', '_blank');
     }
   };
 
