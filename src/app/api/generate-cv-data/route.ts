@@ -4,10 +4,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Inicializar Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash-exp",
+  model: "gemini-2.0-flash",
   generationConfig: {
     temperature: 0.4,
-    maxOutputTokens: 8000,
+    maxOutputTokens: 12000,
     topP: 0.85,
     topK: 40,
   },
@@ -21,6 +21,8 @@ Eres un experto en redacción de CVs y recursos humanos con años de experiencia
       Debes responder ÚNICAMENTE con un objeto JSON válido. NO incluyas explicaciones, comentarios, ni texto adicional.
       NO uses backticks ni marcadores de código.
       ASEGÚRATE de que todos los strings estén correctamente escapados y cerrados.
+      NO incluyas el símbolo • al inicio de cada línea (los bullets se agregan automáticamente después)
+
 
       TAREAS:
       Tu objetivo es tomar el perfil del candidato y el análisis de match con una oferta laboral específica, 
@@ -40,7 +42,6 @@ Eres un experto en redacción de CVs y recursos humanos con años de experiencia
          - Incluye métricas y números cuando sea posible
          - Si la experiencia no es muy relevante, hazla más concisa
          - Ordena las experiencias por relevancia (las más relevantes primero)
-         - Mantén el formato: "• Logro/tarea con resultado"
 
       3. **Habilidades Técnicas**: 
          - Selecciona y ordena las habilidades por relevancia para la oferta
@@ -74,6 +75,7 @@ Eres un experto en redacción de CVs y recursos humanos con años de experiencia
       - Para fechas actuales/sin finalizar usa "Presente"
       - Si no hay datos para una sección opcional (certifications, awards, publications, volunteering), devuelve un array vacío []
       - En experiences, agrupa logros por proyecto cuando tenga sentido
+      - IMPORTANTE: NO incluyas símbolos de bullets (•, -, *) al inicio de las líneas en "bullets" - estos se agregan automáticamente al generar el documento
 
       Devuelve JSON con esta estructura EXACTA:
       {
