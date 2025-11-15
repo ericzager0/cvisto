@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   AlertCircle,
   CheckCircle2,
@@ -13,6 +12,7 @@ import {
   TrendingUp,
   TrendingDown,
   Lightbulb,
+  Building2,
 } from "lucide-react";
 import { generateCvData, generateAndSaveCv } from "@/app/actions";
 import { generateCVDocument } from "@/lib/cvGenerator";
@@ -28,6 +28,7 @@ interface AnalysisResult {
   matchScore: number;
   summaryForRecruiter: string;
   suggestions: Array<{ text: string; category: string }>;
+  company: string;
 }
 
 interface JobScannerClientProps {
@@ -49,10 +50,10 @@ export default function JobScannerClient({
 
   // Cargar texto desde sessionStorage al montar el componente
   useEffect(() => {
-    const storedText = sessionStorage.getItem('jobScannerText');
+    const storedText = sessionStorage.getItem("jobScannerText");
     if (storedText) {
       setJobText(storedText);
-      sessionStorage.removeItem('jobScannerText');
+      sessionStorage.removeItem("jobScannerText");
     }
   }, []);
 
@@ -346,6 +347,7 @@ export default function JobScannerClient({
               </div>
             </div>
           </div>
+
           <div className="p-4 bg-gray-50 rounded-lg border">
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-blue-600" />
@@ -355,6 +357,16 @@ export default function JobScannerClient({
             </div>
             <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
           </div>
+
+          {analysis.company && (
+            <div className="p-4 rounded-lg border">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                <h3 className="font-semibold">Sobre la empresa</h3>
+              </div>
+              <p className="text-gray-700">{analysis.company}</p>
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             <h3 className="text-lg font-semibold flex items-center gap-2">

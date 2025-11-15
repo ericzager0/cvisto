@@ -114,6 +114,7 @@ TAREAS:
 4. Identificar brechas CONCRETAS entre el perfil y los requisitos
 5. Generar un resumen profesional de 2-3 líneas que el candidato podría usar
 6. Proporcionar sugerencias específicas y accionables
+7. Identificar la empresa mencionada en el anuncio; si puede determinarse correctamente, realizar una breve investigación y generar un único párrafo que incluya país de origen, sector o industria, descripción general de la organización y aspectos relevantes de su cultura organizacional; si no es posible identificarla, devolver null en ese apartado.
 
 IMPORTANTE:
 - Responde SOLO en español argentino
@@ -131,7 +132,8 @@ Devuelve JSON con esta estructura:
   "summaryForRecruiter": "Profesional con X años de experiencia en...",
   "suggestions": [
     {"text": "Agregá experiencia en X", "category": "skill"}
-  ]
+  ],
+  "company": "Microsoft es una empresa..."
 }
   
 PERFIL DEL CANDIDATO:
