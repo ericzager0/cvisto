@@ -14,7 +14,7 @@ En desarrollo activo.
 - **Autenticación**: Auth.js (Google como proveedor).
 - **Interfaz y diseño**: shadcn/ui (componentes basados en Radix UI), Tailwind CSS, Lucide Icons.
 - **AI**: Google AI Studio (Gemini API) (Inteligencia artificial para generación de contenido y procesamiento de lenguaje natural).
-- **DOCX**: docx para la construcción de documentos Word.
+- **Documentos**: docx para la construcción de los currículums.
 
 ## Esquema de la base de datos
 
