@@ -44,7 +44,11 @@ En desarrollo activo.
 
 ### CVs page
 
-![CVs page](screenshots/cvs.png)
+![CVs page](screenshots/my-cvs.png)
+
+### CVs empty page
+
+![CVs empty page](screenshots/my-cvs-empty.png)
 
 ### Uploading CV
 
@@ -56,4 +60,17 @@ En desarrollo activo.
 
 ### Job scanned
 
-![Job scanned](screenshots/job-scanned.png)
+![Job scanned 1](screenshots/job-scanned1.png)
+![Job scanned 2](screenshots/job-scanned2.png)
+
+### Enhance profile page
+
+![Enhance profile page](screenshots/enhance-profile-page.png)
+
+### Postulations page
+
+![Postulations page](screenshots/postulations-page.png)
+
+### Search jobs page
+
+![Search jobs page](screenshots/search-jobs.png)

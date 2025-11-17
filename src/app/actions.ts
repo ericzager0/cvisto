@@ -409,7 +409,13 @@ export async function addCV(_initialState: any, formData: FormData) {
 
   const newUrl = (uploadResult as any).secure_url;
 
-  await addCVMutation(newId, session?.user?.id as string, newUrl, file.name, false);
+  await addCVMutation(
+    newId,
+    session?.user?.id as string,
+    newUrl,
+    file.name,
+    false
+  );
   revalidatePath("/profile");
 
   return { success: true };
@@ -465,10 +471,12 @@ export async function deleteLanguage(languageId: number) {
 
 export async function generateCvData(profile: any, analysis: any) {
   console.log("Acción de Servidor: 'generateCvData' iniciada.");
-  
+
   // Importar dinámicamente la función de lógica del endpoint
-  const { generateCvDataLogic } = await import("@/app/api/generate-cv-data/route");
-  
+  const { generateCvDataLogic } = await import(
+    "@/app/api/generate-cv-data/route"
+  );
+
   try {
     console.log("Acción de Servidor: Llamando a la lógica de generación...");
     const cvData = await generateCvDataLogic(profile, analysis);
@@ -489,7 +497,7 @@ export async function generateAndSaveCv(
   cvData: any
 ) {
   console.log("Acción de Servidor: 'generateAndSaveCv' iniciada.");
-  
+
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error("Usuario no autenticado");
@@ -498,13 +506,13 @@ export async function generateAndSaveCv(
   try {
     // Importar la función de upload
     const { uploadCVToCloudinary } = await import("@/lib/cloudinary");
-    
+
     // Generar ID único para el CV
     const cvId = uuidv4();
-    
+
     // Convertir ArrayBuffer a Buffer
     const buffer = Buffer.from(docxBuffer);
-    
+
     // Subir a Cloudinary (el nombre se construye dentro de uploadCVToCloudinary)
     console.log("Subiendo CV a Cloudinary...");
     const cloudinaryUrl = await uploadCVToCloudinary(
@@ -512,23 +520,23 @@ export async function generateAndSaveCv(
       session.user.id,
       cvName
     );
-    
+
     // Guardar en la base de datos con analysis y cvData
     console.log("Guardando CV en la base de datos...");
     await addCVMutation(
-      cvId, 
-      session.user.id, 
-      cloudinaryUrl, 
-      cvName, 
+      cvId,
+      session.user.id,
+      cloudinaryUrl,
+      cvName,
       includePhoto,
       analysis,
       cvData
     );
-    
+
     console.log("CV guardado exitosamente:", { cvId, url: cloudinaryUrl });
-    
+
     revalidatePath("/cvs");
-    
+
     return { success: true, cvId, url: cloudinaryUrl };
   } catch (error) {
     console.error("Error al generar y guardar CV:", error);
@@ -551,21 +559,23 @@ export async function deleteCVAction(cvId: string) {
 
     // Extraer el public_id de la URL de Cloudinary
     // URL ejemplo: https://res.cloudinary.com/dl8hanqpm/raw/upload/v1761757959/cvs/userId/CV_20251029153045_Name.docx
-    const urlParts = cv.url.split('/');
-    const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+    const urlParts = cv.url.split("/");
+    const versionIndex = urlParts.findIndex((part) => part.startsWith("v"));
     if (versionIndex !== -1) {
       // Obtener todo después de la versión (cvs/userId/filename.docx)
-      const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+      const pathAfterVersion = urlParts.slice(versionIndex + 1).join("/");
       // Para archivos raw, el public_id debe incluir la extensión
       const publicId = pathAfterVersion;
-      
+
       console.log("=== ELIMINANDO CV DE CLOUDINARY ===");
       console.log("URL:", cv.url);
       console.log("Public ID:", publicId);
-      
+
       // Eliminar de Cloudinary
       try {
-        const result = await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+        const result = await cloudinary.uploader.destroy(publicId, {
+          resource_type: "raw",
+        });
         console.log("Resultado de eliminación de Cloudinary:", result);
       } catch (cloudinaryError) {
         console.error("Error al eliminar de Cloudinary:", cloudinaryError);
@@ -575,9 +585,9 @@ export async function deleteCVAction(cvId: string) {
 
     // Eliminar de la base de datos
     await deleteCVMutation(cvId);
-    
+
     revalidatePath("/cvs");
-    
+
     return { success: true };
   } catch (error) {
     console.error("Error al eliminar CV:", error);
@@ -601,7 +611,7 @@ export async function updateCVAction(cvId: string, updatedCvData: any) {
     // Regenerar el DOCX con los datos actualizados
     const { generateCVDocument } = await import("@/lib/cvGenerator");
     const { Packer } = await import("docx");
-    
+
     const doc = generateCVDocument(updatedCvData, cv.hasPhoto);
     const blob = await Packer.toBlob(doc);
     const buffer = Buffer.from(await blob.arrayBuffer());
@@ -615,14 +625,19 @@ export async function updateCVAction(cvId: string, updatedCvData: any) {
     );
 
     // Eliminar el CV antiguo de Cloudinary
-    const urlParts = cv.url.split('/');
-    const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+    const urlParts = cv.url.split("/");
+    const versionIndex = urlParts.findIndex((part) => part.startsWith("v"));
     if (versionIndex !== -1) {
-      const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+      const pathAfterVersion = urlParts.slice(versionIndex + 1).join("/");
       try {
-        await cloudinary.uploader.destroy(pathAfterVersion, { resource_type: 'raw' });
+        await cloudinary.uploader.destroy(pathAfterVersion, {
+          resource_type: "raw",
+        });
       } catch (cloudinaryError) {
-        console.error("Error al eliminar CV antiguo de Cloudinary:", cloudinaryError);
+        console.error(
+          "Error al eliminar CV antiguo de Cloudinary:",
+          cloudinaryError
+        );
       }
     }
 
@@ -655,14 +670,14 @@ export async function createJobApplicationAction(data: {
   nextStepDate?: string;
 }) {
   const session = await auth();
-  
+
   if (session?.user?.id !== data.userId) {
     throw new Error("No autorizado");
   }
 
   const { createJobApplication } = await import("@/lib/mutations");
   const id = await createJobApplication(data);
-  
+
   revalidatePath("/postulaciones");
   return { success: true, id };
 }
@@ -679,16 +694,16 @@ export async function updateJobApplicationAction(
 ) {
   const session = await auth();
   const { getJobApplicationById } = await import("@/lib/queries");
-  
+
   const application = await getJobApplicationById(id);
-  
+
   if (!application || session?.user?.id !== application.userId) {
     throw new Error("No autorizado");
   }
 
   const { updateJobApplication } = await import("@/lib/mutations");
   await updateJobApplication(id, data);
-  
+
   revalidatePath("/postulaciones");
   return { success: true };
 }
@@ -696,16 +711,16 @@ export async function updateJobApplicationAction(
 export async function deleteJobApplicationAction(id: string) {
   const session = await auth();
   const { getJobApplicationById } = await import("@/lib/queries");
-  
+
   const application = await getJobApplicationById(id);
-  
+
   if (!application || session?.user?.id !== application.userId) {
     throw new Error("No autorizado");
   }
 
   const { deleteJobApplication } = await import("@/lib/mutations");
   await deleteJobApplication(id);
-  
+
   revalidatePath("/postulaciones");
   return { success: true };
 }
@@ -716,14 +731,14 @@ export async function updateRecommendedPositionsAction(
   positions: string[]
 ) {
   const session = await auth();
-  
+
   if (session?.user?.id !== userId) {
     throw new Error("No autorizado");
   }
 
   const { updateRecommendedPositions } = await import("@/lib/mutations");
   await updateRecommendedPositions(userId, positions);
-  
+
   revalidatePath("/postulaciones");
   return { success: true };
 }
@@ -733,14 +748,14 @@ export async function updateProfileEnhancementAction(
   data: any
 ) {
   const session = await auth();
-  
+
   if (session?.user?.id !== userId) {
     throw new Error("No autorizado");
   }
 
   const { updateProfileEnhancement } = await import("@/lib/mutations");
   await updateProfileEnhancement(userId, data);
-  
+
   revalidatePath("/enhance-profile");
   return { success: true };
 }

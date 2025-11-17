@@ -28,11 +28,11 @@ export default async function ProfilePage() {
   // Determinar si el perfil tiene contenido
   const hasContent = Boolean(
     profile.bio ||
-    profile.phoneNumber ||
-    profile.location ||
-    profile.experiences?.length ||
-    profile.educations?.length ||
-    profile.skills?.length
+      profile.phoneNumber ||
+      profile.location ||
+      profile.experiences?.length ||
+      profile.educations?.length ||
+      profile.skills?.length
   );
 
   return (
@@ -60,7 +60,10 @@ export default async function ProfilePage() {
 
         {/* Botones de importar y limpiar */}
         <div className="flex gap-2">
-          <LinkedInImportButton userId={session?.user?.id!} hasContent={hasContent} />
+          <LinkedInImportButton
+            userId={session?.user?.id!}
+            hasContent={hasContent}
+          />
           {hasContent && <ClearProfileButton userId={session?.user?.id!} />}
         </div>
       </div>
