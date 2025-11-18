@@ -19,6 +19,7 @@ import { generateCVDocument } from "@/lib/cvGenerator";
 import { Packer } from "docx";
 import { Profile } from "@/lib/queries";
 import GenerateCVDialog from "@/components/GenerateCVDialog";
+import { Spinner } from "./ui/spinner";
 
 interface AnalysisResult {
   keywords: string[];
@@ -192,6 +193,12 @@ export default function JobScannerClient({
         )}
       </div>
 
+      {loading && (
+        <div className="w-full flex items-center justify-center">
+          <Spinner className="h-10 w-10" />
+        </div>
+      )}
+
       {analysis && (
         <>
           <div className="flex flex-col gap-6">
@@ -235,9 +242,21 @@ export default function JobScannerClient({
                   <FileText className="h-4 w-4" />
                   {generatingCv ? "Generando CV..." : "Generar CV optimizado"}
                 </Button>
-                <p className="text-sm text-[#777777] text-center">
-                  Crea una versión de tu CV adaptada a esta oferta.
-                </p>
+                <div className="flex flex-col gap-2 justify-center items-center">
+                  {generatingCv ? (
+                    <>
+                      <p className="text-sm text-[#777777] text-center">
+                        Estamos creando una versión de tu CV adaptada a esta
+                        oferta.
+                      </p>
+                      <Spinner />
+                    </>
+                  ) : (
+                    <p className="text-sm text-[#777777] text-center">
+                      Crea una versión de tu CV adaptada a esta oferta.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -350,16 +369,14 @@ export default function JobScannerClient({
 
           <div className="p-4 bg-gray-50 rounded-lg border">
             <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-600" />
-              <h3 className="font-semibold text-blue-900">
-                Resumen para el Recruiter
-              </h3>
+              <FileText className="h-5 w-5" />
+              <h3 className="font-semibold">Resumen para el Recruiter</h3>
             </div>
             <p className="text-gray-700">{analysis.summaryForRecruiter}</p>
           </div>
 
           {analysis.company && (
-            <div className="p-4 rounded-lg border">
+            <div className="p-4 bg-gray-50 rounded-lg border">
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
                 <h3 className="font-semibold">Sobre la empresa</h3>

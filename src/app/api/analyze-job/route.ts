@@ -117,12 +117,12 @@ TAREAS:
 7. Identificar la empresa mencionada en el anuncio; si puede determinarse correctamente, realizar una breve investigación y generar un único párrafo que incluya país de origen, sector o industria, descripción general de la organización y aspectos relevantes de su cultura organizacional; si no es posible identificarla, devolver null en ese apartado.
 
 IMPORTANTE:
-- Responde SOLO en español argentino
+- Todo texto que generes en la respuesta debe estar en idioma español sin excepción, incluso si el anuncio está en inglés.
 - Sé específico, evita generalidades
 - El puntaje debe ser realista (no inflar artificialmente)
 - Las brechas deben ser concretas: "Le falta Python" no "Le faltan skills técnicas"
 
-Devuelve JSON con esta estructura:
+Devuelve JSON con esta estructura :
 {
   "keywords": ["palabra1", "palabra2"],
   "must_haves": ["requisito1", "requisito2"],
@@ -135,7 +135,8 @@ Devuelve JSON con esta estructura:
   ],
   "company": "Microsoft es una empresa..."
 }
-  
+Sin excepción, las props en inglés pero su contenido en español SIEMPRE.
+
 PERFIL DEL CANDIDATO:
 Nombre: ${profile.firstName}
 Apellido: ${profile.lastName}
